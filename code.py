@@ -9,6 +9,10 @@ from kmk.scanners import DiodeOrientation
 from kmk.modules.split import Split, SplitType, SplitSide
 from kmk.modules.layers import Layers
 
+# from kmk.modules.macros import Macros, Press, Release, Tap
+from kmk.modules.macros import Macros, Tap
+
+
 
 # --- 0. PIN DEFINITIONS ---
 # All GPIO pins are defined here as constants for readability and easy maintenance.
@@ -36,6 +40,43 @@ THUMB_ROW_PIN  = board.GP9   # Row 4
 # --- INITIAL SETUP ---
 keyboard = KMKKeyboard()
 keyboard.modules.append(Layers())
+
+# Enable Macros
+# macros = Macros()
+keyboard.modules.append(Macros())
+
+
+
+
+# Nordic Keyboard Layout for the us international keyboard Layout
+
+# --- 1. THE HELPER FUNCTION ---
+# This function takes any key (like KC.QUOTE) and returns a Macro 
+# that taps that key followed immediately by Space.
+def dead_fix(key_code):
+    return KC.MACRO(Tap(key_code), Tap(KC.SPC))
+
+# --- 2. GENERATE THE KEYS ---
+# Now we just call the function for the keys we need.
+
+# Fix all symbols that are dead keys in the us international layout
+US_QUOT = dead_fix(KC.QUOTE)             # '
+US_DQUO = dead_fix(KC.LSFT(KC.QUOTE))    # "
+US_GRV  = dead_fix(KC.GRAVE)             # `
+US_TILD = dead_fix(KC.LSFT(KC.GRAVE))    # ~
+US_CIRC = dead_fix(KC.LSFT(KC.N6))       # ^
+
+# Define Nordic letters (Standard US-Int shortcuts)
+NO_AE = KC.RALT(KC.Z) # Æ
+NO_OE = KC.RALT(KC.L) # Ø
+NO_AA = KC.RALT(KC.W) # Å
+
+
+
+
+
+
+
 
 # --- 1. JUMPER DETECTION ---
 jumper = digitalio.DigitalInOut(SIDE_DETECTION_PIN)
@@ -90,13 +131,13 @@ keyboard.diode_orientation = DiodeOrientation.COL2ROW
 # --- 4. KEYMAP ---
 keyboard.keymap = [
     [
-        # Left Hand (Cols 0-4)                     # Right Hand (Cols 0-4)
-        KC.Q,  KC.W,  KC.E,    KC.R,    KC.T,      KC.Y,   KC.U,    KC.I,    KC.O,   KC.P,    # Row 0
-        KC.A,  KC.S,  KC.D,    KC.F,    KC.G,      KC.H,   KC.J,    KC.K,    KC.L,   KC.SCLN, # Row 1
-        KC.Z,  KC.X,  KC.C,    KC.V,    KC.B,      KC.N,   KC.M,    KC.COMM, KC.DOT, KC.SLSH, # Row 2
+        # Left Hand (Cols 1-5)                     # Right Hand (Cols 1-5)
+        KC.Q,  KC.W,  KC.E,    KC.R,    KC.T,      KC.Y,   KC.U,    KC.I,    KC.O,   KC.P,    # Row 1
+        KC.A,  KC.S,  KC.D,    KC.F,    KC.G,      KC.H,   KC.J,    KC.K,    KC.L,   NO_OE,   # Row 2
+        KC.Z,  KC.X,  KC.C,    KC.V,    KC.B,      KC.N,   KC.M,    US_DQUO, NO_AA,  NO_AE,   # Row 3 
         
-        # Thumbs (Row 3)
-        KC.NO, KC.NO, KC.LCTL, KC.LSFT, KC.SPC,    KC.ENT, KC.BSPC, KC.LALT, KC.NO,  KC.NO,
+        # Left Hands Thumbs (Cols 3-5)             # Right Hands Thumbs (Cols 3-5)
+        KC.NO, KC.NO, KC.LCTL, KC.LSFT, KC.SPC,    KC.ENT, KC.BSPC, KC.LALT, KC.NO,  KC.NO,   # Row 4
     ]
 ]
 
