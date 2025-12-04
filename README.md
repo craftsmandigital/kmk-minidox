@@ -27,9 +27,9 @@ For a complete, step-by-step tutorial on hand-wiring this keyboard—including d
 ## 📂 File Structure
 
 * [boot.py](./boot.py): Runs at startup. Checks for "Maintenance Keys" to decide if the **[CircuitPython](https://circuitpython.org/)** USB drive should be visible.
-* [code.py](./blob/main/code.py): The main firmware logic. Sets up the keyboard, split communication, and keymap.
-* [hardware.py](./blob/main/hardware.py): Central configuration for Pin definitions. Imported by both `boot.py` and `code.py`.
-* [layout.py](./blob/main/layout.py): Custom key definitions, macros for Nordic characters, and dead key fixes.
+* [code.py](./code.py): The main firmware logic. Sets up the keyboard, split communication, and keymap.
+* [hardware.py](./hardware.py): Central configuration for Pin definitions. Imported by both `boot.py` and `code.py`.
+* [layout.py](./layout.py): Custom key definitions, macros for Nordic characters, and dead key fixes.
 
 ---
 
