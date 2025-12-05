@@ -9,7 +9,7 @@ from kmk.scanners import DiodeOrientation
 from kmk.modules.split import Split, SplitType, SplitSide
 from kmk.modules.layers import Layers
 from kmk.modules.sticky_keys import StickyKeys
-
+from kmk.modules.combos import Combos, Sequence
 # from kmk.modules.macros import Macros, Press, Release, Tap
 from kmk.modules.macros import Macros
 
@@ -21,12 +21,50 @@ import hardware  # Pins (Local Library)
 
 # --- INITIAL SETUP ---
 keyboard = KMKKeyboard()
+keyboard.debug_enabled = True  # <--- ADD THIS LINE
+
 keyboard.modules.append(Layers())
 keyboard.modules.append(StickyKeys())
 # Enable Macros
 # macros = Macros()
 keyboard.modules.append(Macros())
 #keyboard.modules.append(OSL())  # This enables our custom KC.OSL
+
+combos = Combos()
+keyboard.modules.append(combos)
+
+import layout    # Custom Keys (Nordic + Dead Fixes)  (Local Library)
+# 1. Define a placeholder key for "Leader"
+# We use F24 because it rarely does anything on a PC.
+LEAD = KC.F24
+
+# 2. Define the Sequences
+# Sequence((FirstKey, SecondKey), Action, timeout=ms)
+combos.combos = [
+    Sequence((LEAD, KC.F), KC.SK(KC.RSFT), timeout=1000),
+    Sequence((LEAD, KC.D), KC.SK(KC.RCTL), timeout=1000),
+    Sequence((LEAD, KC.S), KC.SK(KC.RALT), timeout=1000),
+    Sequence((LEAD, KC.A), KC.SK(KC.RGUI), timeout=1000),
+   
+    Sequence((LEAD, KC.J), KC.SK(KC.LSFT), timeout=1000),
+    Sequence((LEAD, KC.K), KC.SK(KC.LCTL), timeout=1000),
+    Sequence((LEAD, KC.L), KC.SK(KC.LALT), timeout=1000),
+    Sequence((LEAD, layout.NO_OE), KC.SK(KC.LGUI), timeout=1000),
+]
+# combos.combos = [
+#     # Leader -> J (28) -> Sticky Ctrl
+#     Sequence((37, 28), KC.SK(KC.LCTL), timeout=1000),
+#
+#     # Leader -> K (27) -> Sticky Shift
+#     Sequence((37, 27), KC.SK(KC.LSFT), timeout=1000),
+#
+#     # Leader -> L (26) -> Sticky Alt
+#     Sequence((37, 26), KC.SK(KC.LALT), timeout=1000),
+#
+#     # Leader -> ; (25) -> Sticky GUI (Pinky neighbor)
+#     Sequence((37, 25), KC.SK(KC.LGUI), timeout=1000),
+# ]
+
 
 # --- 1. JUMPER DETECTION ---
 jumper = digitalio.DigitalInOut(hardware.SIDE_DETECTION_PIN)
@@ -64,7 +102,6 @@ keyboard.row_pins = hardware.ROW_PINS
 
 keyboard.diode_orientation = DiodeOrientation.COL2ROW
 
-import layout    # Custom Keys (Nordic + Dead Fixes)  (Local Library)
 
 # --- 4. KEYMAP ---
 
@@ -84,7 +121,7 @@ keyboard.keymap = [
         
         # Left Hands Thumbs (Cols 3-5)             # Right Hands Thumbs (Cols 3-5)
         # Note: Left Inner (SPC) is now LT(_SYM, KC.SPC)
-        KC.NO, KC.NO, KC.LCTL, KC.SPC, KC.SK(KC.MO(_SYM)),    KC.ENT, KC.BSPC, KC.LALT, KC.NO,  KC.NO,   # Row 4
+        KC.NO, KC.NO, KC.LCTL, KC.SPC, KC.SK(KC.MO(_SYM)),    KC.ENT, KC.BSPC, LEAD, KC.NO,  KC.NO,   # Row 4
     ],
 
     # -------------------------------------------------------------------------
@@ -98,7 +135,7 @@ keyboard.keymap = [
 
         
         # -        ?        :        "        /        {        (        [        $        _
-        KC.MINS, KC.QUES, KC.COLN, layout.US_DQUO, KC.SLSH,   KC.LCBR, KC.LPRN, KC.LBRC, KC.DLR,  KC.UNDS, # Row 2
+        KC.MINS, KC.QUES, KC.COLN, layout.US_DQUO, KC.SLSH,   KC.LBRC, KC.SK(KC.LSFT), KC.SK(KC.LCTL), KC.SK(KC.LALT), KC.SK(KC.LGUI), # Row 2
         
         # %        ~        ^        `        =        }        )        ]        &        #
         KC.PERC, layout.US_TILD, layout.US_CIRC, layout.US_GRV, KC.EQL,    KC.RCBR, KC.RPRN, KC.RBRC, KC.AMPR, KC.HASH, # Row 3 
