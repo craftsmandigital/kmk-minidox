@@ -9,7 +9,7 @@ from kmk.scanners import DiodeOrientation
 from kmk.modules.split import Split, SplitType, SplitSide
 from kmk.modules.layers import Layers
 from kmk.modules.sticky_keys import StickyKeys
-from kmk.modules.combos import Combos, Sequence
+from kmk.modules.combos import Combos, Chord, Sequence
 # from kmk.modules.macros import Macros, Press, Release, Tap
 from kmk.modules.macros import Macros
 
@@ -23,15 +23,25 @@ import hardware  # Pins (Local Library)
 keyboard = KMKKeyboard()
 keyboard.debug_enabled = True  # <--- ADD THIS LINE
 
+# 1. Layers (Always first)
 keyboard.modules.append(Layers())
-keyboard.modules.append(StickyKeys())
-# Enable Macros
+
+# 2. HoldTap (If you use it)
+# keyboard.modules.append(HoldTap())
+
+# 3. Combos (MUST be before Macros!)
+# This ensures Combos only looks at your fingers, not at what Macros type.
+combos = Combos()
+keyboard.modules.append(combos)
+
+# 4 Macros
 # macros = Macros()
 keyboard.modules.append(Macros())
 #keyboard.modules.append(OSL())  # This enables our custom KC.OSL
 
-combos = Combos()
-keyboard.modules.append(combos)
+# 5. Sticky Keys (Last)?dfs?"s?+?a?a-?-??--??--?-??--?-?-?-?-?-?-??-s-?--?-??--??-
+keyboard.modules.append(StickyKeys())
+
 
 import layout    # Custom Keys (Nordic + Dead Fixes)  (Local Library)
 # 1. Define a placeholder key for "Leader"
@@ -50,6 +60,8 @@ combos.combos = [
     Sequence((LEAD, KC.K), KC.SK(KC.LCTL), timeout=1000),
     Sequence((LEAD, KC.L), KC.SK(KC.LALT), timeout=1000),
     Sequence((LEAD, layout.NO_OE), KC.SK(KC.LGUI), timeout=1000),
+    
+    Chord((KC.MINS, KC.QUES), layout.CURLY_DOUBLE),
 ]
 # combos.combos = [
 #     # Leader -> J (28) -> Sticky Ctrl
@@ -77,6 +89,7 @@ if not jumper.value:
     is_right = True
 
 # --- 2. SPLIT CONFIGURATION ---
+
 split = Split(
     split_type=SplitType.UART,
     data_pin=hardware.SPLIT_UART_PIN,
@@ -152,6 +165,7 @@ keyboard.keymap = [
 
 if __name__ == '__main__':
     keyboard.go()
+
 
 
 
