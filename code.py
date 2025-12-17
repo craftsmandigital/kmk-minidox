@@ -7,16 +7,20 @@ from kmk.kmk_keyboard import KMKKeyboard
 from kmk.keys import KC
 from kmk.scanners import DiodeOrientation
 from kmk.modules.split import Split, SplitType, SplitSide
+
 from kmk.modules.layers import Layers
 from kmk.modules.sticky_keys import StickyKeys
 from kmk.modules.combos import Combos, Chord, Sequence
 # from kmk.modules.macros import Macros, Press, Release, Tap
+
 from kmk.modules.macros import Macros
 
 
 # 1. Import our new, custom OSL module
 #from osl import OSL
 import hardware  # Pins (Local Library)
+
+
 
 
 # --- INITIAL SETUP ---
@@ -36,6 +40,7 @@ keyboard.modules.append(combos)
 
 # 4 Macros
 # macros = Macros()
+
 keyboard.modules.append(Macros())
 #keyboard.modules.append(OSL())  # This enables our custom KC.OSL
 
@@ -47,6 +52,27 @@ import layout    # Custom Keys (Nordic + Dead Fixes)  (Local Library)
 # 1. Define a placeholder key for "Leader"
 # We use F24 because it rarely does anything on a PC.
 LEAD = KC.F24
+
+# -------------------------------------------------------------------------
+# LAYERS & MODIFIERS
+# -------------------------------------------------------------------------
+LAYER_BASE = 0
+LAYER_SYM  = 1
+LAYER_NUM  = 2
+LAYER_FUN  = 3
+LAYER_NAV  = 4
+
+SYM_SK_MO = KC.SK(KC.MO(LAYER_SYM))
+NUM_SK_MO = KC.SK(KC.MO(LAYER_NUM))
+FUN_SK_MO = KC.SK(KC.MO(LAYER_FUN))
+
+OS_LCTL = KC.SK(KC.LCTL)
+OS_LSFT = KC.SK(KC.LSFT)
+OS_LALT = KC.SK(KC.LALT)
+OS_LGUI = KC.SK(KC.LGUI)
+
+
+ALT_TAB = KC.LALT(KC.TAB)
 
 # 2. Define the Sequences
 # Sequence((FirstKey, SecondKey), Action, timeout=ms)
@@ -61,7 +87,22 @@ combos.combos = [
     Sequence((LEAD, KC.L), KC.SK(KC.LALT), timeout=1000),
     Sequence((LEAD, layout.NO_OE), KC.SK(KC.LGUI), timeout=1000),
     
-    Chord((KC.MINS, KC.QUES), layout.CURLY_DOUBLE),
+    Chord((KC.MINS, KC.QUES), layout.MACRO_PAR),
+
+    # Fun Layer
+    Chord((KC.BSPC, NUM_SK_MO), FUN_SK_MO),
+
+    # Brackets & Quotes
+    Chord((KC.LCBR, KC.RCBR), layout.MACRO_CRL),
+    Chord((KC.LPRN, KC.RPRN), layout.MACRO_PAR),
+    Chord((KC.LABK, KC.RABK), layout.MACRO_ANG),
+    Chord((KC.LBRC, KC.RBRC), layout.MACRO_SQR),
+
+    # Quotes
+    Chord((layout.US_QUOT, KC.SCLN), layout.MACRO_QUO), 
+    Chord((layout.US_DQUO, KC.COLN), layout.MACRO_DBL),
+    Chord((layout.US_GRV,  layout.US_TILD), layout.MACRO_GRV),
+
 ]
 # combos.combos = [
 #     # Leader -> J (28) -> Sticky Ctrl
@@ -81,6 +122,7 @@ combos.combos = [
 # --- 1. JUMPER DETECTION ---
 jumper = digitalio.DigitalInOut(hardware.SIDE_DETECTION_PIN)
 jumper.direction = digitalio.Direction.INPUT
+
 jumper.pull = digitalio.Pull.UP
 
 
@@ -88,14 +130,16 @@ is_right = False
 if not jumper.value:
     is_right = True
 
-# --- 2. SPLIT CONFIGURATION ---
 
+# --- 2. SPLIT CONFIGURATION ---
 split = Split(
     split_type=SplitType.UART,
+
     data_pin=hardware.SPLIT_UART_PIN,
     use_pio=True,
     uart_flip=True
 )
+
 
 if is_right:
     split.split_side = SplitSide.RIGHT
@@ -104,8 +148,10 @@ else:
 
 keyboard.modules.append(split)
 
+
 # --- 3. PINS & MATRIX (The Fix) ---
 # We use the SAME pin order for both sides.
+
 # Because you wired the Right side mirrored (GP2=Inner), 
 # we do NOT need to reverse the list in software.
 
@@ -116,30 +162,11 @@ keyboard.row_pins = hardware.ROW_PINS
 keyboard.diode_orientation = DiodeOrientation.COL2ROW
 
 
-# -------------------------------------------------------------------------
-# LAYERS & MODIFIERS
-# -------------------------------------------------------------------------
-LAYER_BASE = 0
-LAYER_SYM  = 1
-LAYER_NUM  = 2
-LAYER_FUN  = 3
-LAYER_NAV  = 4
-
-SYM_SK_MO = KC.SK(KC.MO(LAYER_SYM))
-NUM_SK_MO = KC.SK(KC.MO(LAYER_NUM))
-
-OS_LCTL = KC.SK(KC.LCTL)
-OS_LSFT = KC.SK(KC.LSFT)
-OS_LALT = KC.SK(KC.LALT)
-OS_LGUI = KC.SK(KC.LGUI)
-
-ALT_TAB = KC.LALT(KC.TAB)
-
 🪟 = KC.TRNS
 ⛔ = KC.NO
 
-keyboard.keymap = [
 
+keyboard.keymap = [
     # -------------------------------------------------------------------------
     # LAYER 0: BASE
     # -------------------------------------------------------------------------
@@ -156,7 +183,8 @@ keyboard.keymap = [
         KC.PLUS, KC.EXLM, KC.SCLN, layout.US_QUOT, KC.ASTR,      KC.COMM, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
         KC.MINS, KC.QUES, KC.COLN, layout.US_DQUO, KC.SLSH,      KC.DOT,  OS_LCTL, OS_LSFT, OS_LALT, OS_LGUI,
         KC.PERC, layout.US_TILD, KC.PIPE, layout.US_GRV,  KC.EQL,       KC.UNDS, KC.LABK, KC.RABK, KC.LBRC, KC.RBRC,
-        ⛔,      ⛔,      layout.US_CIRC, KC.AT,  KC.BSLS,      KC.AMPR, KC.DEL,  KC.DLR,  ⛔,      ⛔,
+        ⛔,      ⛔,      layout.US_CIRC, KC.AT,  KC.BSLS,      KC.AMPR, KC.DEL,  KC.DLR,    ⛔,      ⛔,
+
     ],
     # -------------------------------------------------------------------------
     # LAYER 2: NUM
@@ -165,8 +193,17 @@ keyboard.keymap = [
         KC.PLUS, KC.N7,   KC.N8,   KC.N9,   KC.ASTR,      KC.COMM, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
         KC.MINS, KC.N3,   KC.N2,   KC.N1,   KC.SLSH,      KC.DOT,  OS_LCTL, OS_LSFT, OS_LALT, OS_LGUI,
         KC.PERC, KC.N4,   KC.N5,   KC.N6,   KC.EQL,       KC.UNDS, KC.LABK, KC.RABK, KC.LBRC, KC.RBRC,
-        ⛔,      ⛔,     KC.N0,   KC.SPC,  KC.CW,        KC.CAPS, KC.DEL,  KC.DLR,   ⛔,      ⛔,
+        ⛔,      ⛔,      KC.N0,   KC.SPC,  KC.CW,        KC.CAPS, KC.DEL,  FUN_SK_MO,   ⛔,      ⛔,
     ],
+    # -------------------------------------------------------------------------
+    # LAYER 2: FUN
+    # -------------------------------------------------------------------------
+    [
+        ⛔,     KC.F7,  KC.F8,  KC.F9,  ⛔,         ⛔,     ⛔,     ⛔,     ⛔,     ⛔,
+        ⛔,     KC.F4,  KC.F5,  KC.F6,  ⛔,         ⛔,     OS_LCTL,OS_LSFT,OS_LALT,OS_LGUI,
+        ⛔,     KC.F1,  KC.F2,  KC.F3,  ⛔,         ⛔,     ⛔,     ⛔,     ⛔,     ⛔,
+        ⛔,     ⛔,     KC.F10, KC.F11, KC.F12,     ⛔,     ⛔,     ⛔,     ⛔,     ⛔,
+    ]
 ]
 
 
@@ -174,6 +211,9 @@ keyboard.keymap = [
 
 if __name__ == '__main__':
     keyboard.go()
+
+
+
 
 
 

@@ -10,6 +10,11 @@ from kmk.modules.macros import Tap
 def dead_fix(key_code):
     return KC.MACRO(Tap(key_code), Tap(KC.SPC))
 
+
+def pairs_and_left(key_code1, key_code2):
+    return KC.MACRO(Tap(key_code1), Tap(key_code2), Tap(KC.LEFT))
+
+
 # --- 2. GENERATE THE KEYS ---
 # Now we just call the function for the keys we need.
 
@@ -25,10 +30,14 @@ NO_AE = KC.RALT(KC.Z) # Æ
 NO_OE = KC.RALT(KC.L) # Ø
 NO_AA = KC.RALT(KC.W) # Å
 
-CURLY_DOUBLE = KC.MACRO(
-    Tap(KC.LCBR),
-    Tap(KC.RCBR),
-    #Delay(1000),
-    Tap(KC.LEFT),
-)
+
+MACRO_PAR = pairs_and_left(KC.LPRN, KC.RPRN)
+MACRO_CRL = pairs_and_left(KC.LCBR, KC.RCBR)
+MACRO_SQR = pairs_and_left(KC.LBRC, KC.RBRC)
+MACRO_ANG = pairs_and_left(KC.LABK, KC.RABK)
+MACRO_QUO = pairs_and_left(KC.QUOT, KC.QUOT)
+MACRO_DBL = pairs_and_left(KC.DQUO, KC.DQUO)
+MACRO_GRV = pairs_and_left(KC.GRV,  KC.GRV)
+
+
 
