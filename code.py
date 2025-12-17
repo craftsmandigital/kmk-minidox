@@ -116,48 +116,57 @@ keyboard.row_pins = hardware.ROW_PINS
 keyboard.diode_orientation = DiodeOrientation.COL2ROW
 
 
-# --- 4. KEYMAP ---
+# -------------------------------------------------------------------------
+# LAYERS & MODIFIERS
+# -------------------------------------------------------------------------
+LAYER_BASE = 0
+LAYER_SYM  = 1
+LAYER_NUM  = 2
+LAYER_FUN  = 3
+LAYER_NAV  = 4
 
-# --- 4. KEYMAP ---
-_BASE = 0
-_SYM  = 1
+SYM_SK_MO = KC.SK(KC.MO(LAYER_SYM))
+NUM_SK_MO = KC.SK(KC.MO(LAYER_NUM))
+
+OS_LCTL = KC.SK(KC.LCTL)
+OS_LSFT = KC.SK(KC.LSFT)
+OS_LALT = KC.SK(KC.LALT)
+OS_LGUI = KC.SK(KC.LGUI)
+
+ALT_TAB = KC.LALT(KC.TAB)
+
+🪟 = KC.TRNS
+⛔ = KC.NO
 
 keyboard.keymap = [
+
     # -------------------------------------------------------------------------
     # LAYER 0: BASE
     # -------------------------------------------------------------------------
     [
-        # Left Hand (Cols 1-5)                     # Right Hand (Cols 1-5)
-        KC.Q,  KC.W,  KC.E,    KC.R,    KC.T,      KC.Y,   KC.U,    KC.I,    KC.O,   KC.P,    # Row 1
-        KC.A,  KC.S,  KC.D,    KC.F,    KC.G,      KC.H,   KC.J,    KC.K,    KC.L,   layout.NO_OE,   # Row 2
-        KC.Z,  KC.X,  KC.C,    KC.V,    KC.B,      KC.N,   KC.M,    layout.US_QUOT,  layout.NO_AA,  layout.NO_AE,   # Row 3 
-        
-        # Left Hands Thumbs (Cols 3-5)             # Right Hands Thumbs (Cols 3-5)
-        # Note: Left Inner (SPC) is now LT(_SYM, KC.SPC)
-        KC.NO, KC.NO, KC.LCTL, KC.SPC, KC.SK(KC.MO(_SYM)),    KC.ENT, KC.BSPC, LEAD, KC.NO,  KC.NO,   # Row 4
+        KC.Q,  KC.W,  KC.E,    KC.R,    KC.T,      KC.Y,   KC.U,    KC.I,    KC.O,   KC.P,
+        KC.A,  KC.S,  KC.D,    KC.F,    KC.G,      KC.H,   KC.J,    KC.K,    KC.L,   layout.NO_OE,
+        KC.Z,  KC.X,  KC.C,    KC.V,    KC.B,      KC.N,   KC.M,    layout.US_QUOT, layout.NO_AA,  layout.NO_AE,
+        ⛔,      ⛔,  LEAD,   KC.SPC, SYM_SK_MO,   KC.ENT, KC.BSPC, NUM_SK_MO,   ⛔,      ⛔,
     ],
-
     # -------------------------------------------------------------------------
-    # LAYER 1: SYM (Miryoku Style)
+    # LAYER 1: SYM
     # -------------------------------------------------------------------------
     [
-        # Left Hand (Cols 1-5)                     # Right Hand (Cols 1-5)
-
-        # +        !        ;        '        *        ,        .        CW       Caps     NO
-        KC.PLUS, KC.EXLM, KC.SCLN, layout.US_QUOT, KC.ASTR,   KC.COMM, KC.DOT,  KC.CW,   KC.CAPS, KC.NO,   # Row 1
-
-        
-        # -        ?        :        "        /        {        (        [        $        _
-        KC.MINS, KC.QUES, KC.COLN, layout.US_DQUO, KC.SLSH,   KC.LBRC, KC.SK(KC.LSFT), KC.SK(KC.LCTL), KC.SK(KC.LALT), KC.SK(KC.LGUI), # Row 2
-        
-        # %        ~        ^        `        =        }        )        ]        &        #
-        KC.PERC, layout.US_TILD, layout.US_CIRC, layout.US_GRV, KC.EQL,    KC.RCBR, KC.RPRN, KC.RBRC, KC.AMPR, KC.HASH, # Row 3 
-        
-        # Left Hands Thumbs (Cols 3-5)             # Right Hands Thumbs (Cols 3-5)
-
-        # |        \        TRNS (Hold)            >        @        NO
-        KC.NO, KC.NO, KC.PIPE, KC.BSLS, KC.TRNS,             KC.RABT, KC.AT,   KC.NO,   KC.NO,  KC.NO,   # Row 4
-    ]
+        KC.PLUS, KC.EXLM, KC.SCLN, layout.US_QUOT, KC.ASTR,      KC.COMM, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
+        KC.MINS, KC.QUES, KC.COLN, layout.US_DQUO, KC.SLSH,      KC.DOT,  OS_LCTL, OS_LSFT, OS_LALT, OS_LGUI,
+        KC.PERC, layout.US_TILD, KC.PIPE, layout.US_GRV,  KC.EQL,       KC.UNDS, KC.LABK, KC.RABK, KC.LBRC, KC.RBRC,
+        ⛔,      ⛔,      layout.US_CIRC, KC.AT,  KC.BSLS,      KC.AMPR, KC.DEL,  KC.DLR,  ⛔,      ⛔,
+    ],
+    # -------------------------------------------------------------------------
+    # LAYER 2: NUM
+    # -------------------------------------------------------------------------
+    [
+        KC.PLUS, KC.N7,   KC.N8,   KC.N9,   KC.ASTR,      KC.COMM, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
+        KC.MINS, KC.N3,   KC.N2,   KC.N1,   KC.SLSH,      KC.DOT,  OS_LCTL, OS_LSFT, OS_LALT, OS_LGUI,
+        KC.PERC, KC.N4,   KC.N5,   KC.N6,   KC.EQL,       KC.UNDS, KC.LABK, KC.RABK, KC.LBRC, KC.RBRC,
+        ⛔,      ⛔,     KC.N0,   KC.SPC,  KC.CW,        KC.CAPS, KC.DEL,  KC.DLR,   ⛔,      ⛔,
+    ],
 ]
 
 
