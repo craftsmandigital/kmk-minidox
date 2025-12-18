@@ -1,4 +1,6 @@
 print("--- STARTING KEYBOARD ---")
+# IMPORTANT!!
+# This layot is dependent of US international keyboard layout
 
 # import board
 import digitalio
@@ -25,26 +27,31 @@ import hardware  # Pins (Local Library)
 
 # --- INITIAL SETUP ---
 keyboard = KMKKeyboard()
-keyboard.debug_enabled = True  # <--- ADD THIS LINE
+keyboard.debug_enabled = False  # <--- ADD THIS LINE
 
 # 1. Layers (Always first)
 keyboard.modules.append(Layers())
-
-# 2. HoldTap (If you use it)
-# keyboard.modules.append(HoldTap())
 
 # 3. Combos (MUST be before Macros!)
 # This ensures Combos only looks at your fingers, not at what Macros type.
 combos = Combos()
 keyboard.modules.append(combos)
 
-# 4 Macros
-# macros = Macros()
 
+# 2. HoldTap (If you use it)
+from kmk.modules.holdtap import HoldTap
+keyboard.modules.append(HoldTap())
+
+
+# 4 Macros
 keyboard.modules.append(Macros())
 #keyboard.modules.append(OSL())  # This enables our custom KC.OSL
 
-# 5. Sticky Keys (Last)?dfs?"s?+?a?a-?-??--??--?-??--?-?-?-?-?-?-??-s-?--?-??--??-
+# 5. Sticky Mod (Place it here)
+from kmk.modules.sticky_mod import StickyMod
+keyboard.modules.append(StickyMod())
+
+# 6. Sticky Keys (Last)?dfs?"s?+?a?a-?-??--??--?-??--?-?-?-?-?-?-??-s-?--?-??--??-
 keyboard.modules.append(StickyKeys())
 
 
@@ -62,24 +69,42 @@ LAYER_NUM  = 2
 LAYER_FUN  = 3
 LAYER_NAV  = 4
 
+
+# If you TAP the key: It activates the NAV layer and keeps it active for exactly one keypress.
+# If you HOLD the key: It activates the NAV layer and keeps it active as long as you hold the key.
 SYM_SK_MO = KC.SK(KC.MO(LAYER_SYM))
 NUM_SK_MO = KC.SK(KC.MO(LAYER_NUM))
 FUN_SK_MO = KC.SK(KC.MO(LAYER_FUN))
+# Tap: Trigger KC.TG (Toggle Layer On/Off).
+# Hold: Trigger KC.MO (Momentary Layer active only while held).
+NAV_SK_MO = KC.HT(KC.TG(LAYER_NAV), KC.MO(LAYER_NAV))
 
 OS_LCTL = KC.SK(KC.LCTL)
 OS_LSFT = KC.SK(KC.LSFT)
 OS_LALT = KC.SK(KC.LALT)
 OS_LGUI = KC.SK(KC.LGUI)
 
+# --- NAV LAYER SHORTCUTS ---
+SelAll  = KC.LCTL(KC.A)
+Paste   = KC.LCTL(KC.V)
+Copy    = KC.LCTL(KC.C)
+Cut     = KC.LCTL(KC.X)
+Cut     = KC.LCTL(KC.X)
+Undo    = KC.LCTL(KC.Z)
+Redo    = KC.LCTL(KC.Y)
 
-ALT_TAB = KC.LALT(KC.TAB)
+# --- STICKY ALT+TAB ---
+# KC.SM(Key, Mod) holds the modifier (Alt) while you tap the key (Tab).
+# The modifier stays held until you press a different key.
+ALT_TAB = KC.SM(KC.TAB, KC.LALT)
 
 # 2. Define the Sequences
 # Sequence((FirstKey, SecondKey), Action, timeout=ms)
 combos.combos = [
     Sequence((LEAD, KC.F), KC.SK(KC.RSFT), timeout=1000),
     Sequence((LEAD, KC.D), KC.SK(KC.RCTL), timeout=1000),
-    Sequence((LEAD, KC.S), KC.SK(KC.RALT), timeout=1000),
+    # Sequence((LEAD, KC.S), KC.SK(KC.RALT), timeout=1000), # spits out øßßßßsssßðá
+    Sequence((LEAD, KC.S), KC.SK(KC.LALT), timeout=1000),
     Sequence((LEAD, KC.A), KC.SK(KC.RGUI), timeout=1000),
    
     Sequence((LEAD, KC.J), KC.SK(KC.LSFT), timeout=1000),
@@ -173,8 +198,8 @@ keyboard.keymap = [
     [
         KC.Q,  KC.W,  KC.E,    KC.R,    KC.T,      KC.Y,   KC.U,    KC.I,    KC.O,   KC.P,
         KC.A,  KC.S,  KC.D,    KC.F,    KC.G,      KC.H,   KC.J,    KC.K,    KC.L,   layout.NO_OE,
-        KC.Z,  KC.X,  KC.C,    KC.V,    KC.B,      KC.N,   KC.M,    layout.US_QUOT, layout.NO_AA,  layout.NO_AE,
-        ⛔,      ⛔,  LEAD,   KC.SPC, SYM_SK_MO,   KC.ENT, KC.BSPC, NUM_SK_MO,   ⛔,      ⛔,
+        KC.Z,  KC.X,  KC.C,    KC.V,    KC.B,      KC.N,   KC.M,    LEAD,layout.NO_AA,layout.NO_AE,
+        ⛔,   ⛔,  NAV_SK_MO,  KC.SPC,SYM_SK_MO,   KC.ENT, KC.BSPC,NUM_SK_MO,   ⛔,      ⛔,
     ],
     # -------------------------------------------------------------------------
     # LAYER 1: SYM
@@ -196,26 +221,27 @@ keyboard.keymap = [
         ⛔,      ⛔,      KC.N0,   KC.SPC,  KC.CW,        KC.CAPS, KC.DEL,  FUN_SK_MO,   ⛔,      ⛔,
     ],
     # -------------------------------------------------------------------------
-    # LAYER 2: FUN
+    # LAYER 3: FUN
     # -------------------------------------------------------------------------
     [
         ⛔,     KC.F7,  KC.F8,  KC.F9,  ⛔,         ⛔,     ⛔,     ⛔,     ⛔,     ⛔,
         ⛔,     KC.F4,  KC.F5,  KC.F6,  ⛔,         ⛔,     OS_LCTL,OS_LSFT,OS_LALT,OS_LGUI,
         ⛔,     KC.F1,  KC.F2,  KC.F3,  ⛔,         ⛔,     ⛔,     ⛔,     ⛔,     ⛔,
         ⛔,     ⛔,     KC.F10, KC.F11, KC.F12,     ⛔,     ⛔,     ⛔,     ⛔,     ⛔,
+    ],
+    # -------------------------------------------------------------------------
+    # LAYER 4: NAV
+    # -------------------------------------------------------------------------
+    [
+        # Left Hand (5 cols)                       # Right Hand (5 cols)
+        ⛔,      SelAll,  Paste,   Copy,    Cut,       KC.HOME, KC.PGDN, KC.PGUP, KC.END,  Redo,
+        OS_LGUI, OS_LALT, OS_LSFT, OS_LCTL, ⛔,        KC.LEFT, KC.DOWN, KC.UP,   KC.RGHT, Undo,
+        ⛔,      ⛔,      ⛔,      ⛔,      ⛔,        ⛔,      KC.TAB,  ALT_TAB, ⛔,      ⛔,
+        ⛔,      ⛔,      🪟,      ⛔,      ⛔,        ⛔,      ⛔,      ⛔,      ⛔,      ⛔,
     ]
 ]
 
 
-
-
 if __name__ == '__main__':
     keyboard.go()
-
-
-
-
-
-
-
 
