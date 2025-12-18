@@ -1,43 +1,40 @@
 import board
+import digitalio
+from kmk.kmk_keyboard import KMKKeyboard
+from kmk.scanners import DiodeOrientation
+from kmk.modules.split import Split, SplitType, SplitSide
 
-# --- 0. PIN DEFINITIONS ---
-# All GPIO pins are defined here as constants for readability and easy maintenance.
-# If you change the wiring, you only need to update the values in this section.
+class DactylMinidox(KMKKeyboard):
+    def __init__(self):
+        super().__init__()
 
-# General Pins
-SIDE_DETECTION_PIN = board.GP21  # Jumper to GND on the right side to identify it.
-SPLIT_UART_PIN = board.GP1       # Pin used for UART communication between halves.
+        # ---------------------------------------------------------------------
+        # 1. MATRIX CONFIGURATION
+        # ---------------------------------------------------------------------
+        # Columns: GP2 -> GP3 -> GP4 -> GP5 -> GP28
+        self.col_pins = (board.GP2, board.GP3, board.GP4, board.GP5, board.GP28)
+        # Rows: GP6 -> GP7 -> GP8 -> GP9
+        self.row_pins = (board.GP6, board.GP7, board.GP8, board.GP9)
+        self.diode_orientation = DiodeOrientation.COL2ROW
 
-# Column Pins (based on finger hints, from outside to inside)
-PINKY_COL_PIN         = board.GP2   # Col 1
-RING_FINGER_COL_PIN   = board.GP3   # Col 2
-MIDDLE_FINGER_COL_PIN = board.GP4   # Col 3
-INDEX_FINGER_COL_PIN  = board.GP5   # Col 4
-INDEX_INNER_COL_PIN   = board.GP28  # Col 5
+        # ---------------------------------------------------------------------
+        # 2. SPLIT CONFIGURATION
+        # ---------------------------------------------------------------------
+        self.split = Split(
+            split_type=SplitType.UART,
+            data_pin=board.GP1,
+            use_pio=True,
+            uart_flip=True
+        )
 
-# Row Pins (from top to bottom)
-TOP_ROW_PIN    = board.GP6   # Row 1
-HOME_ROW_PIN   = board.GP7   # Row 2
-BOTTOM_ROW_PIN = board.GP8   # Row 3
-THUMB_ROW_PIN  = board.GP9   # Row 4
+        # ---------------------------------------------------------------------
+        # 3. SIDE DETECTION
+        # ---------------------------------------------------------------------
+        # Jumper on GP21 to GND = Right Side
+        jumper = digitalio.DigitalInOut(board.GP21)
+        jumper.direction = digitalio.Direction.INPUT
+        jumper.pull = digitalio.Pull.UP
 
+        self.split.split_side = SplitSide.RIGHT if not jumper.value else SplitSide.LEFT
+        self.modules.append(self.split)
 
-
-# --- KMK GROUPS ---
-# We group the individual variables above into tuples.
-# This allows KMK and boot.py to iterate over them easily.
-
-COL_PINS = (
-    PINKY_COL_PIN, 
-    RING_FINGER_COL_PIN, 
-    MIDDLE_FINGER_COL_PIN, 
-    INDEX_FINGER_COL_PIN, 
-    INDEX_INNER_COL_PIN
-)
-
-ROW_PINS = (
-    TOP_ROW_PIN, 
-    HOME_ROW_PIN, 
-    BOTTOM_ROW_PIN, 
-    THUMB_ROW_PIN
-)

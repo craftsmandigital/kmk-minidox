@@ -1,22 +1,16 @@
-# Dactyl Minidox (KMK Firmware)
+Here is the final, polished `README.md`.
 
-A custom, hand-wired 36-key split keyboard running on **[KMK Firmware](https://github.com/KMKfw/kmk_firmware)** and **[Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)** (RP2040).
+It merges the **new modular architecture** we just built with the **Stealth Mode/Maintenance** instructions from your old file. It also includes the clickable file links, the build guide, and the critical US-International warning.
 
-This repository contains the source code and configuration for a **Dactyl Minidox** build that features **Nordic character support** on a **[US-International](https://en.wikipedia.org/wiki/QWERTY#US-International)** layout, a modular code structure, and a **"Stealth Mode"** boot script.
+***
 
-## 🌟 Features
+# ⌨️ Dactyl Minidox - KMK Firmware
 
-* **Split Keyboard:** 36 keys (5x3 + 3 thumbs per side).
-* **Visual Wiring:** Wiring logic is "Left-to-Right" on both halves (no mirroring required in firmware).
-* **Nordic Support:** Type **Æ Ø Å** seamlessly while keeping the coding-friendly **US Layout** (using **[US-International](https://en.wikipedia.org/wiki/QWERTY#US-International)** OS settings).
-* **Dead Key Fixes:** Automatic macros to fix annoying dead keys (`' " ^ ~`) common in International layouts.
-* **Stealth Drive:** The USB drive is hidden by default to prevent popups.
-* **Maintenance Mode:** Unlock the USB drive by holding specific keys during plug-in.
-* **Modular Code:** Configuration is split into `hardware.py`, `layout.py`, and `code.py` for easy maintenance.
+> A hand-wired, split ergonomic keyboard powered by Raspberry Pi Pico (RP2040) and [KMK Firmware](https://github.com/KMKfw/kmk_firmware).
 
----
+This repository contains the source code and configuration for a **Dactyl Minidox** build. It features a modular codebase, a custom Norwegian/US-International hybrid layout, Vim-style navigation, and a "Stealth Mode" that hides the USB drive by default.
 
-## 🛠️ Hardware & Wiring
+## 📖 Build Guide
 
 For a complete, step-by-step tutorial on hand-wiring this keyboard—including detailed pinout diagrams, matrix logic, and assembly instructions—please consult the full build guide:
 
@@ -24,20 +18,124 @@ For a complete, step-by-step tutorial on hand-wiring this keyboard—including d
 
 ---
 
-## 📂 File Structure
+## ⚠️ Important: OS Layout
 
-* [boot.py](./boot.py): Runs at startup. Checks for "Maintenance Keys" to decide if the **[CircuitPython](https://circuitpython.org/)** USB drive should be visible.
-* [code.py](./code.py): The main firmware logic. Sets up the keyboard, split communication, and keymap.
-* [hardware.py](./hardware.py): Central configuration for Pin definitions. Imported by both `boot.py` and `code.py`.
-* [layout.py](./layout.py): Custom key definitions, macros for Nordic characters, and dead key fixes.
+To use the Norwegian characters (`Æ`, `Ø`, `Å`) and the dead-key fixes provided in this firmware, you **must** set your computer's input language to **US-International**.
+
+*   **Windows/Linux/macOS**: Set keyboard layout to **US-International**.
+*   The firmware handles the translation of macros (e.g., `AltGr` + `L`) to produce the correct characters on screen.
 
 ---
 
-## 🚀 Installation
+## 📂 Project Structure
 
-1. **Install CircuitPython:** Download and flash the latest **[CircuitPython for Raspberry Pi Pico](https://circuitpython.org/board/raspberry_pi_pico/)** `.uf2` file onto both Picos.
-2. **Install KMK:** Download the **[KMK Firmware](https://github.com/KMKfw/kmk_firmware)**, unzip it, and copy the `kmk` folder into the `lib/` folder on both drives.
-3. **Deploy Code:** Copy `boot.py`, `code.py`, `hardware.py`, and `layout.py` from this repository to the root directory of **BOTH** drives.
+The code is organized into logical modules for easy maintenance. Click the files below to view them:
+
+| File | Description |
+| :--- | :--- |
+| **[`code.py`](./code.py)** | **The Entry Point.** Initializes hardware, loads modules in the correct order, and runs the keyboard. |
+| **[`hardware.py`](./hardware.py)** | **Physical Config.** Defines the `DactylMinidox` class, GPIO pinouts, diode orientation, and split logic. |
+| **[`features.py`](./features.py)** | **The Logic.** Contains Macros, Combos, Custom Keys, Helper functions, and Layer definitions. |
+| **[`keymap.py`](./keymap.py)** | **The Visuals.** Contains the raw keymap grid and layer layout. |
+| **[`boot.py`](./boot.py)** | **Startup Script.** Handles "Stealth Mode" (hides the USB drive unless a key is held). |
+
+---
+
+## ✨ Features
+
+*   **Split Architecture**: Two RP2040s communicating via UART (TRRS).
+*   **"Split Flip" Wiring**: Identical pinout definition for both sides (Right side columns wired in reverse).
+*   **Norwegian Support**: Type **Æ Ø Å** seamlessly on a US layout.
+*   **Dead Key Fixes**: Automatic macros to fix annoying dead keys (`' " ^ ~`).
+*   **Stealth Drive**: The USB drive is hidden by default to prevent popups.
+*   **Advanced Input**:
+    *   **Combos**: Auto-closing brackets `()`, `{}`, `[]`, `<>` and quotes.
+    *   **Leader Key**: Sequences for Sticky Modifiers.
+    *   **One-Shot Layers**: Sticky keys for seamless layer switching.
+    *   **Vim Navigation**: HJKL-style movement on the Nav layer.
+
+---
+
+## 🔌 Hardware & Wiring
+
+### Pinout Configuration
+Both halves use the same GPIO pins.
+
+| Matrix Position | RP2040 Pin | Note |
+| :--- | :--- | :--- |
+
+| **Row 0** (Top) | `GP6` | |
+| **Row 1** | `GP7` | |
+| **Row 2** | `GP8` | |
+
+| **Row 3** (Thumbs) | `GP9` | |
+| **Col 0** (Pinky) | `GP2` | |
+| **Col 1** | `GP3` | |
+| **Col 2** | `GP4` | |
+| **Col 3** | `GP5` | |
+| **Col 4** (Inner) | `GP28` | |
+| **UART (Data)** | `GP1` | Connects TRRS Tip/Ring |
+
+| **Side Detect** | `GP21` | **Jumper to GND** = Right Side |
+
+### ⚠️ The "Split Flip" Wiring
+To allow identical firmware on both sides, the **Right Half** columns must be physically wired in reverse order compared to the Left Half.
+*   **Left Side**: Col 0 (Pinky) $\rightarrow$ GP2 ... Col 4 (Inner) $\rightarrow$ GP28
+*   **Right Side**: Col 0 (Pinky) $\rightarrow$ GP28 ... Col 4 (Inner) $\rightarrow$ GP2
+
+---
+
+## 🗺️ Layout & Layers
+
+### Layer 0: BASE
+Standard QWERTY.
+*   **Thumbs**: `Space`, `Enter`, `Backspace`, and Sticky Layer keys (`SYM`, `NUM`).
+*   **Leader Key**: Located on the inner column (Right hand).
+
+### Layer 1: SYM (Symbols)
+Activated via One-Shot (Sticky) key.
+*   Contains all programming symbols (`!`, `@`, `#`, `{`, `}`, etc.).
+*   Includes One-Shot Modifiers on the home row.
+
+### Layer 2: NUM (Numbers)
+Activated via One-Shot (Sticky) key.
+*   **Left Hand**: Numpad (`789`, `456`, `123`, `0`).
+*   **Right Hand**: Navigation symbols and modifiers.
+
+### Layer 3: FUN (Function)
+Activated via Combo (`Backspace` + `NUM` key).
+*   F1 - F12 keys.
+
+### Layer 4: NAV (Navigation)
+Activated by **Tapping** the Toggle key, or **Holding** for momentary access.
+*   **Left Hand**: Clipboard tools (`Select All`, `Copy`, `Cut`, `Paste`).
+*   **Right Hand**: Arrow keys, `Home`, `End`, `PgUp`, `PgDn`.
+*   **Special**: Sticky `Alt+Tab` for window switching.
+
+---
+
+## 🚀 Advanced Usage
+
+### ⚡ Combos (Brackets)
+Pressing two keys simultaneously triggers macros that type the brackets and move the cursor inside them.
+
+| Chord | Result |
+| :--- | :--- |
+| `(` + `)` | `(|)` |
+| `{` + `}` | `{|}` |
+| `[` + `]` | `[|]` |
+| `<` + `>` | `<|>` |
+| `'` + `;` | `'|'` |
+| `"` + `:` | `"|"` |
+
+### 👑 Leader Key Sequences
+Tap the **Leader Key** (`F24`), then tap a letter to activate a Sticky Modifier.
+
+*   `Lead` + `F` $\rightarrow$ Sticky **Right Shift**
+*   `Lead` + `D` $\rightarrow$ Sticky **Right Ctrl**
+*   `Lead` + `S` $\rightarrow$ Sticky **Left Alt**
+*   `Lead` + `A` $\rightarrow$ Sticky **Right GUI**
+*   *(Mirrored on the Left hand with J, K, L, ;)*
 
 ---
 
@@ -45,37 +143,19 @@ For a complete, step-by-step tutorial on hand-wiring this keyboard—including d
 
 By default, the `CIRCUITPY` USB drive is **hidden** when you plug in the keyboard to keep your desktop clean. To edit your code:
 
-1. **Unplug** the keyboard.
-2. **Hold** the top-corner key:
-    * **Left Side:** Hold **Q** (Top-Left).
-    * **Right Side:** Hold **P** (Top-Right).
-3. **Plug in** the USB cable while holding the key.
-4. Release the key after 1 second. The drive will appear.
+1.  **Unplug** the keyboard.
+2.  **Hold** the top-corner key:
+    *   **Left Side:** Hold **Q** (Top-Left).
+    *   **Right Side:** Hold **P** (Top-Right).
+3.  **Plug in** the USB cable while holding the key.
+4.  Release the key after 1 second. The drive will appear.
 
 ---
 
-## ⌨️ Layout & Nordic Characters
+## 🛠️ Installation
 
-This keyboard is designed to be used with the **[US-International](https://en.wikipedia.org/wiki/QWERTY#US-International)** input language setting on your computer (Windows/macOS/Linux).
 
-### Custom Macros (`layout.py`)
+1.  **Install CircuitPython**: Flash the latest **[CircuitPython for Raspberry Pi Pico](https://circuitpython.org/board/raspberry_pi_pico/)** `.uf2` file onto both Picos.
+2.  **Install KMK**: Download the **[KMK Firmware](https://github.com/KMKfw/kmk_firmware)**, unzip it, and copy the `kmk` folder into the `lib/` folder on both drives.
 
-To solve the "Dead Key" issue on US-International (where you have to type space after a quote), this firmware uses custom macros:
-
-* **`layout.US_QUOT`**: Types `'` + `Space` instantly.
-* **`layout.NO_AE`**: Sends `AltGr` + `Z` (Æ).
-* **`layout.NO_OE`**: Sends `AltGr` + `L` (Ø).
-* **`layout.NO_AA`**: Sends `AltGr` + `W` (Å).
-
-### Modifying the Keymap
-
-Edit **`code.py`** to change your layers. Use the custom keys defined in `layout.py` for special characters.
-
-```python
-# Example in code.py
-keyboard.keymap = [
-    [
-        # ...
-        layout.NO_AA, layout.NO_AE, layout.NO_OE, ...
-    ]
-]
+3.  **Deploy Code**: Copy `boot.py`, `code.py`, `hardware.py`, `features.py`, and `keymap.py` to the root directory of **BOTH** drives.
