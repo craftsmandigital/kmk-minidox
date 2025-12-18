@@ -1,9 +1,3 @@
-Here is the final, polished `README.md`.
-
-It merges the **new modular architecture** we just built with the **Stealth Mode/Maintenance** instructions from your old file. It also includes the clickable file links, the build guide, and the critical US-International warning.
-
-***
-
 # ⌨️ Dactyl Minidox - KMK Firmware
 
 > A hand-wired, split ergonomic keyboard powered by Raspberry Pi Pico (RP2040) and [KMK Firmware](https://github.com/KMKfw/kmk_firmware).
@@ -22,8 +16,8 @@ For a complete, step-by-step tutorial on hand-wiring this keyboard—including d
 
 To use the Norwegian characters (`Æ`, `Ø`, `Å`) and the dead-key fixes provided in this firmware, you **must** set your computer's input language to **US-International**.
 
-*   **Windows/Linux/macOS**: Set keyboard layout to **US-International**.
-*   The firmware handles the translation of macros (e.g., `AltGr` + `L`) to produce the correct characters on screen.
+* **Windows/Linux/macOS**: Set keyboard layout to **US-International**.
+* The firmware handles the translation of macros (e.g., `AltGr` + `L`) to produce the correct characters on screen.
 
 ---
 
@@ -43,22 +37,23 @@ The code is organized into logical modules for easy maintenance. Click the files
 
 ## ✨ Features
 
-*   **Split Architecture**: Two RP2040s communicating via UART (TRRS).
-*   **"Split Flip" Wiring**: Identical pinout definition for both sides (Right side columns wired in reverse).
-*   **Norwegian Support**: Type **Æ Ø Å** seamlessly on a US layout.
-*   **Dead Key Fixes**: Automatic macros to fix annoying dead keys (`' " ^ ~`).
-*   **Stealth Drive**: The USB drive is hidden by default to prevent popups.
-*   **Advanced Input**:
-    *   **Combos**: Auto-closing brackets `()`, `{}`, `[]`, `<>` and quotes.
-    *   **Leader Key**: Sequences for Sticky Modifiers.
-    *   **One-Shot Layers**: Sticky keys for seamless layer switching.
-    *   **Vim Navigation**: HJKL-style movement on the Nav layer.
+* **Split Architecture**: Two RP2040s communicating via UART (TRRS).
+* **"Split Flip" Wiring**: Identical pinout definition for both sides (Right side columns wired in reverse).
+* **Norwegian Support**: Type **Æ Ø Å** seamlessly on a US layout.
+* **Dead Key Fixes**: Automatic macros to fix annoying dead keys (`' " ^ ~`).
+* **Stealth Drive**: The USB drive is hidden by default to prevent popups.
+* **Advanced Input**:
+  * **Combos**: Auto-closing brackets `()`, `{}`, `[]`, `<>` and quotes.
+  * **Leader Key**: Sequences for Sticky Modifiers.
+  * **One-Shot Layers**: Sticky keys for seamless layer switching.
+  * **Vim Navigation**: HJKL-style movement on the Nav layer.
 
 ---
 
 ## 🔌 Hardware & Wiring
 
 ### Pinout Configuration
+
 Both halves use the same GPIO pins.
 
 | Matrix Position | RP2040 Pin | Note |
@@ -79,44 +74,57 @@ Both halves use the same GPIO pins.
 | **Side Detect** | `GP21` | **Jumper to GND** = Right Side |
 
 ### ⚠️ The "Split Flip" Wiring
+
 To allow identical firmware on both sides, the **Right Half** columns must be physically wired in reverse order compared to the Left Half.
-*   **Left Side**: Col 0 (Pinky) $\rightarrow$ GP2 ... Col 4 (Inner) $\rightarrow$ GP28
-*   **Right Side**: Col 0 (Pinky) $\rightarrow$ GP28 ... Col 4 (Inner) $\rightarrow$ GP2
+
+* **Left Side**: Col 0 (Pinky) $\rightarrow$ GP2 ... Col 4 (Inner) $\rightarrow$ GP28
+* **Right Side**: Col 0 (Pinky) $\rightarrow$ GP28 ... Col 4 (Inner) $\rightarrow$ GP2
 
 ---
 
 ## 🗺️ Layout & Layers
 
 ### Layer 0: BASE
+
 Standard QWERTY.
-*   **Thumbs**: `Space`, `Enter`, `Backspace`, and Sticky Layer keys (`SYM`, `NUM`).
-*   **Leader Key**: Located on the inner column (Right hand).
+
+* **Thumbs**: `Space`, `Enter`, `Backspace`, and Sticky Layer keys (`SYM`, `NUM`).
+* **Leader Key**: Located on the inner column (Right hand).
 
 ### Layer 1: SYM (Symbols)
+
 Activated via One-Shot (Sticky) key.
-*   Contains all programming symbols (`!`, `@`, `#`, `{`, `}`, etc.).
-*   Includes One-Shot Modifiers on the home row.
+
+* Contains all programming symbols (`!`, `@`, `#`, `{`, `}`, etc.).
+* Includes One-Shot Modifiers on the home row.
 
 ### Layer 2: NUM (Numbers)
+
 Activated via One-Shot (Sticky) key.
-*   **Left Hand**: Numpad (`789`, `456`, `123`, `0`).
-*   **Right Hand**: Navigation symbols and modifiers.
+
+* **Left Hand**: Numpad (`789`, `456`, `123`, `0`).
+* **Right Hand**: Navigation symbols and modifiers.
 
 ### Layer 3: FUN (Function)
+
 Activated via Combo (`Backspace` + `NUM` key).
-*   F1 - F12 keys.
+
+* F1 - F12 keys.
 
 ### Layer 4: NAV (Navigation)
+
 Activated by **Tapping** the Toggle key, or **Holding** for momentary access.
-*   **Left Hand**: Clipboard tools (`Select All`, `Copy`, `Cut`, `Paste`).
-*   **Right Hand**: Arrow keys, `Home`, `End`, `PgUp`, `PgDn`.
-*   **Special**: Sticky `Alt+Tab` for window switching.
+
+* **Left Hand**: Clipboard tools (`Select All`, `Copy`, `Cut`, `Paste`).
+* **Right Hand**: Arrow keys, `Home`, `End`, `PgUp`, `PgDn`.
+* **Special**: Sticky `Alt+Tab` for window switching.
 
 ---
 
 ## 🚀 Advanced Usage
 
 ### ⚡ Combos (Brackets)
+
 Pressing two keys simultaneously triggers macros that type the brackets and move the cursor inside them.
 
 | Chord | Result |
@@ -129,13 +137,14 @@ Pressing two keys simultaneously triggers macros that type the brackets and move
 | `"` + `:` | `"|"` |
 
 ### 👑 Leader Key Sequences
+
 Tap the **Leader Key** (`F24`), then tap a letter to activate a Sticky Modifier.
 
-*   `Lead` + `F` $\rightarrow$ Sticky **Right Shift**
-*   `Lead` + `D` $\rightarrow$ Sticky **Right Ctrl**
-*   `Lead` + `S` $\rightarrow$ Sticky **Left Alt**
-*   `Lead` + `A` $\rightarrow$ Sticky **Right GUI**
-*   *(Mirrored on the Left hand with J, K, L, ;)*
+* `Lead` + `F` $\rightarrow$ Sticky **Right Shift**
+* `Lead` + `D` $\rightarrow$ Sticky **Right Ctrl**
+* `Lead` + `S` $\rightarrow$ Sticky **Left Alt**
+* `Lead` + `A` $\rightarrow$ Sticky **Right GUI**
+* *(Mirrored on the Left hand with J, K, L, ;)*
 
 ---
 
@@ -143,19 +152,18 @@ Tap the **Leader Key** (`F24`), then tap a letter to activate a Sticky Modifier.
 
 By default, the `CIRCUITPY` USB drive is **hidden** when you plug in the keyboard to keep your desktop clean. To edit your code:
 
-1.  **Unplug** the keyboard.
-2.  **Hold** the top-corner key:
-    *   **Left Side:** Hold **Q** (Top-Left).
-    *   **Right Side:** Hold **P** (Top-Right).
-3.  **Plug in** the USB cable while holding the key.
-4.  Release the key after 1 second. The drive will appear.
+1. **Unplug** the keyboard.
+2. **Hold** the top-corner key:
+    * **Left Side:** Hold **Q** (Top-Left).
+    * **Right Side:** Hold **P** (Top-Right).
+3. **Plug in** the USB cable while holding the key.
+4. Release the key after 1 second. The drive will appear.
 
 ---
 
 ## 🛠️ Installation
 
+1. **Install CircuitPython**: Flash the latest **[CircuitPython for Raspberry Pi Pico](https://circuitpython.org/board/raspberry_pi_pico/)** `.uf2` file onto both Picos.
+2. **Install KMK**: Download the **[KMK Firmware](https://github.com/KMKfw/kmk_firmware)**, unzip it, and copy the `kmk` folder into the `lib/` folder on both drives.
 
-1.  **Install CircuitPython**: Flash the latest **[CircuitPython for Raspberry Pi Pico](https://circuitpython.org/board/raspberry_pi_pico/)** `.uf2` file onto both Picos.
-2.  **Install KMK**: Download the **[KMK Firmware](https://github.com/KMKfw/kmk_firmware)**, unzip it, and copy the `kmk` folder into the `lib/` folder on both drives.
-
-3.  **Deploy Code**: Copy `boot.py`, `code.py`, `hardware.py`, `features.py`, and `keymap.py` to the root directory of **BOTH** drives.
+3. **Deploy Code**: Copy `boot.py`, `code.py`, `hardware.py`, `features.py`, and `keymap.py` to the root directory of **BOTH** drives.
