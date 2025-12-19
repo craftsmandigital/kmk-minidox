@@ -58,11 +58,9 @@ Both halves use the same GPIO pins.
 
 | Matrix Position | RP2040 Pin | Note |
 | :--- | :--- | :--- |
-
 | **Row 0** (Top) | `GP6` | |
 | **Row 1** | `GP7` | |
 | **Row 2** | `GP8` | |
-
 | **Row 3** (Thumbs) | `GP9` | |
 | **Col 0** (Pinky) | `GP2` | |
 | **Col 1** | `GP3` | |
@@ -70,7 +68,6 @@ Both halves use the same GPIO pins.
 | **Col 3** | `GP5` | |
 | **Col 4** (Inner) | `GP28` | |
 | **UART (Data)** | `GP1` | Connects TRRS Tip/Ring |
-
 | **Side Detect** | `GP21` | **Jumper to GND** = Right Side |
 
 ### ⚠️ The "Split Flip" Wiring
