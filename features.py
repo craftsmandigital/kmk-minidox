@@ -64,6 +64,8 @@ Cut     = KC.LCTL(KC.X)
 Undo    = KC.LCTL(KC.Z)
 Redo    = KC.LCTL(KC.Y)
 ALT_TAB = KC.SM(KC.TAB, KC.LALT)
+WordR    = KC.LCTL(KC.RIGHT)
+WordL    = KC.LCTL(KC.LEFT)
 
 # Visual Aliases
 TRNS = KC.TRNS

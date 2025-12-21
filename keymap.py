@@ -24,8 +24,8 @@ LAYERS = [
 
     # LAYER 2: NUM
     [
-        KC.PLUS, KC.N7,   KC.N8,   KC.N9,   KC.ASTR,     KC.COMM, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
-        KC.MINS, KC.N3,   KC.N2,   KC.N1,   KC.SLSH,     KC.DOT,  OS_LCTL, OS_LSFT, OS_LALT, OS_LGUI,
+        KC.PLUS, KC.N7,   KC.N8,   KC.N9,   KC.ASTR,     KC.COMM, KC.TAB, KC.RPRN, KC.LCBR, KC.RCBR,
+        KC.MINS, KC.N3,   KC.N2,   KC.N1,   KC.SLSH,     KC.DOT,  OS_LCTL, KC.ESC,  OS_LALT, OS_LGUI,
         KC.PERC, KC.N4,   KC.N5,   KC.N6,   KC.EQL,      KC.UNDS, KC.LABK, KC.RABK, KC.LBRC, KC.RBRC,
         XXXX,    XXXX,    KC.N0,   KC.SPC,  KC.CAPS,     KC.CAPS, KC.DEL,  FUN_SK,  XXXX,    XXXX,
     ],
@@ -42,7 +42,7 @@ LAYERS = [
     [
         XXXX,    SelAll,  Paste,   Copy,    Cut,         KC.HOME, KC.PGDN, KC.PGUP, KC.END,  Redo,
         OS_LGUI, OS_LALT, OS_LSFT, OS_LCTL, XXXX,        KC.LEFT, KC.DOWN, KC.UP,   KC.RGHT, Undo,
-        XXXX,    XXXX,    XXXX,    XXXX,    XXXX,        XXXX,    KC.TAB,  ALT_TAB, XXXX,    XXXX,
+        XXXX,    XXXX,    XXXX,    XXXX,    XXXX,        WordL,    ALT_TAB, XXXX,   WordR,   XXXX,
         XXXX,    XXXX,    TRNS,    XXXX,    XXXX,        XXXX,    XXXX,    XXXX,    XXXX,    XXXX,
     ]
 ]
