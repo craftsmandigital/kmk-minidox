@@ -1,8 +1,8 @@
 # ⌨️ Dactyl Minidox - KMK Firmware
 
-![KMK Firmware](https://img.shields.io/github/v/release/KMKfw/kmk_firmware?label=KMK%20Firmware&logo=python)
-![CircuitPython](https://img.shields.io/badge/CircuitPython-${CIRCUITPY_VERSION}-blue)
-![Platform](https://img.shields.io/badge/Platform-RP2040-Pico-X2-Blue%20Micro-success)
+[![CircuitPython](https://img.shields.io/badge/CircuitPython-10.0.3-blueviolet?logo=python&logoColor=white)](https://github.com/adafruit/circuitpython/releases/tag/10.0.3)
+[![KMK Firmware](https://img.shields.io/badge/KMK-commit_5a6669d-blue?logo=github)](https://github.com/KMKfw/kmk_firmware/commit/5a6669d1da219444e027fb20f57d4f5b3ecdedfe)
+[![RP2040](https://img.shields.io/badge/RP2040-Raspberry%20Pi%20Pico-C51A4A?logo=raspberrypi&logoColor=white)](https://www.raspberrypi.com/products/raspberry-pi-pico/)
 
 > A hand-wired, split ergonomic keyboard powered by Raspberry Pi Pico (RP2040) and [KMK Firmware](https://github.com/KMKfw/kmk_firmware).
 
