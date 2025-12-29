@@ -1,5 +1,9 @@
 # ⌨️ Dactyl Minidox - KMK Firmware
 
+![KMK Firmware](https://img.shields.io/github/v/release/KMKfw/kmk_firmware?label=KMK%20Firmware&logo=python)
+![CircuitPython](https://img.shields.io/badge/CircuitPython-${CIRCUITPY_VERSION}-blue)
+![Platform](https://img.shields.io/badge/Platform-RP2040-Pico-X2-Blue%20Micro-success)
+
 > A hand-wired, split ergonomic keyboard powered by Raspberry Pi Pico (RP2040) and [KMK Firmware](https://github.com/KMKfw/kmk_firmware).
 
 This repository contains the source code and configuration for a **Dactyl Minidox** build. It features a modular codebase, a custom Norwegian/US-International hybrid layout, Vim-style navigation, and a "Stealth Mode" that hides the USB drive by default.
