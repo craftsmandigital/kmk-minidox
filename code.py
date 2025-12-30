@@ -28,10 +28,10 @@ caps_word = CapsWord()
 #    Order: Layers -> Combos -> Macros -> StickyKeys
 keyboard.modules.append(layers)
 
-keyboard.modules.append(combos)
-keyboard.modules.append(macros)
 keyboard.modules.append(sticky_keys)
 keyboard.modules.append(sticky_mod)
+keyboard.modules.append(combos)
+keyboard.modules.append(macros)
 
 # 4. Import Features
 #    (Must be done after Macros/StickyKeys are registered)

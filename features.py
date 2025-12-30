@@ -2,7 +2,9 @@ import supervisor
 from kmk.keys import KC
 from kmk.modules import Module
 from kmk.modules.macros import Macros, Tap
-from kmk.modules.combos import Chord
+from kmk.modules.combos import Chord, Sequence
+
+from abbreviations import abbrevs
 
 # -------------------------------------------------------------------------
 # 1. CUSTOM MODULE: Sticky Leader (Production Optimized)
@@ -136,11 +138,28 @@ def dead_fix(code):
 def pair_macro(open_k, close_k):
     return KC.MACRO(Tap(open_k), Tap(close_k), Tap(KC.LEFT))
 
+# Helper to convert string "abc" -> (KC.A, KC.B, KC.C)
+def get_seq_from_string(trigger):
+    seq = []
+    for char in trigger:
+        if char.isalpha():
+            seq.append(getattr(KC, char.upper()))
+        elif char.isdigit():
+            seq.append(getattr(KC, f"N{char}"))
+        elif char == ' ':
+            seq.append(KC.SPC)
+    return tuple(seq)
+
 # -------------------------------------------------------------------------
 # 4. CUSTOM KEYS & ALIASES
 # -------------------------------------------------------------------------
-# Leader Key
-LEAD = KC.F24
+# Leader Key for StickyLeader stuff
+LEAD_SK = KC.F24
+
+# NEW: Safe Leader for Sticky Layers
+# F23 Is a "real" keycode (so Sticky Keys sees it and drops the layer). KC.LEADER is a fake key
+LEAD_AB = KC.F23
+
 
 # Nordic Characters
 NO_AE = KC.RALT(KC.Z)
@@ -200,7 +219,7 @@ MAP_R = {
     NO_OE: KC.LGUI, 
 }
 
-sticky_leader = StickyLeader(trigger_key=LEAD, left_map=MAP_L, right_map=MAP_R)
+sticky_leader = StickyLeader(trigger_key=LEAD_SK, left_map=MAP_L, right_map=MAP_R)
 
 # -------------------------------------------------------------------------
 # 6. MACROS
@@ -228,3 +247,24 @@ COMBO_LIST = [
     Chord((US_DQUO, KC.COLN), MACRO_DBL),
     Chord((US_GRV,  US_TILD), MACRO_GRV),
 ]
+
+# Dynamically add Abbreviations to COMBO_LIST
+for trigger, content in abbrevs.items():
+    # 1. Convert trigger text to KeyCodes (e.g. "al" -> KC.A, KC.L)
+    trigger_seq = get_seq_from_string(trigger)
+    
+    # 2. Prepend the Leader Key (F23)
+    full_sequence = (LEAD_AB,) + trigger_seq
+    
+    # 3. Create Sequence
+    # Check if content is a List/Tuple (Complex) or String (Simple)
+    if isinstance(content, (list, tuple)):
+        # Unpack the list into the Macro: KC.MACRO("H", OE, "r")
+        COMBO_LIST.append(
+            Sequence(full_sequence, KC.MACRO(*content), timeout=2000)
+        )
+    else:
+        # Standard string: KC.MACRO("Jon Arne")
+        COMBO_LIST.append(
+            Sequence(full_sequence, KC.MACRO(content), timeout=2000)
+        )
