@@ -28,16 +28,16 @@ caps_word = CapsWord()
 #    Order: Layers -> Combos -> Macros -> StickyKeys
 keyboard.modules.append(layers)
 
-keyboard.modules.append(sticky_keys)
-keyboard.modules.append(sticky_mod)
 keyboard.modules.append(combos)
 keyboard.modules.append(macros)
 
+keyboard.modules.append(sticky_keys)
+keyboard.modules.append(sticky_mod)
 # 4. Import Features
 #    (Must be done after Macros/StickyKeys are registered)
 from keymap import LAYERS
 from features import COMBO_LIST, sticky_leader
-
+from features import COMBO_LIST, sticky_leader, LEADER_SEQUENCES, apply_leader_sequences
 # 5. Register Custom & Input Modules (CRITICAL ORDER)
 #    StickyLeader must run BEFORE HoldTap to capture keys correctly.
 keyboard.modules.append(sticky_leader)
@@ -48,6 +48,9 @@ keyboard.modules.append(caps_word)
 # 6. Apply Configuration
 combos.combos = COMBO_LIST
 keyboard.keymap = LAYERS
+
+# 7. GENERATE SEQUENCES (Must be after keyboard.keymap is set)
+apply_leader_sequences(keyboard, LEADER_SEQUENCES, combos)
 
 if __name__ == '__main__':
     keyboard.go()

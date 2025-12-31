@@ -4,8 +4,6 @@ from kmk.modules import Module
 from kmk.modules.macros import Macros, Tap
 from kmk.modules.combos import Chord, Sequence
 
-from abbreviations import abbrevs
-
 # -------------------------------------------------------------------------
 # 1. CUSTOM MODULE: Sticky Leader (Production Optimized)
 # -------------------------------------------------------------------------
@@ -119,6 +117,60 @@ class StickyLeader(Module):
 
         return key
 
+
+# -------------------------------------------------------------------------
+# NEW: OMNI-SEQUENCE GENERATOR
+# -------------------------------------------------------------------------
+def apply_leader_sequences(keyboard, config, combos_module):
+    """
+    Generates layer-aware Sequences based on physical coordinates.
+    config format: { LEADER_KEY: [ ((COORD_1, COORD_2), OUTPUT_KEY), ... ] }
+    """
+    
+    # Helper: Find effective key at coord, handling TRNS
+    def get_effective_key(layer_idx, coord):
+        for idx in range(layer_idx, -1, -1):
+            try:
+                key = keyboard.keymap[idx][coord]
+                if key != KC.TRNS:
+                    return key
+            except IndexError:
+                continue # Safety for uneven layers
+        return None
+
+    for leader_key, seq_list in config.items():
+        for coords, output_key in seq_list:
+            generated_sequences = set()
+
+            # Scan every layer
+            for layer_idx, _ in enumerate(keyboard.keymap):
+                current_seq = []
+                valid_layer = True
+
+                for coord in coords:
+                    eff_key = get_effective_key(layer_idx, coord)
+                    
+                    # If key is NO or undefined, skip this layer
+                    if eff_key is None or eff_key == KC.NO:
+                        valid_layer = False
+                        break
+                    
+                    current_seq.append(eff_key)
+
+                if valid_layer:
+                    # Create tuple: (LeaderKey, Key1, Key2...)
+                    full_seq_tuple = (leader_key,) + tuple(current_seq)
+
+                    generated_sequences.add(full_seq_tuple)
+
+            # Register unique sequences
+            for seq_tuple in generated_sequences:
+                # timeout=2000 matches your StickyLeader preference
+                combos_module.combos.append(
+                    Sequence(seq_tuple, output_key, timeout=2000)
+                )
+
+
 # -------------------------------------------------------------------------
 # 2. LAYER INDICES
 # -------------------------------------------------------------------------
@@ -138,28 +190,11 @@ def dead_fix(code):
 def pair_macro(open_k, close_k):
     return KC.MACRO(Tap(open_k), Tap(close_k), Tap(KC.LEFT))
 
-# Helper to convert string "abc" -> (KC.A, KC.B, KC.C)
-def get_seq_from_string(trigger):
-    seq = []
-    for char in trigger:
-        if char.isalpha():
-            seq.append(getattr(KC, char.upper()))
-        elif char.isdigit():
-            seq.append(getattr(KC, f"N{char}"))
-        elif char == ' ':
-            seq.append(KC.SPC)
-    return tuple(seq)
-
 # -------------------------------------------------------------------------
 # 4. CUSTOM KEYS & ALIASES
 # -------------------------------------------------------------------------
-# Leader Key for StickyLeader stuff
-LEAD_SK = KC.F24
-
-# NEW: Safe Leader for Sticky Layers
-# F23 Is a "real" keycode (so Sticky Keys sees it and drops the layer). KC.LEADER is a fake key
-LEAD_AB = KC.F23
-
+# Leader Key
+LEAD = KC.F24
 
 # Nordic Characters
 NO_AE = KC.RALT(KC.Z)
@@ -219,7 +254,26 @@ MAP_R = {
     NO_OE: KC.LGUI, 
 }
 
-sticky_leader = StickyLeader(trigger_key=LEAD_SK, left_map=MAP_L, right_map=MAP_R)
+sticky_leader = StickyLeader(trigger_key=LEAD, left_map=MAP_L, right_map=MAP_R)
+
+# -------------------------------------------------------------------------
+# 6. CONFIGURE SEQUENCE LEADER (NEW)
+# -------------------------------------------------------------------------
+# Format: { LEADER_KEY: [ ((COORD_1, COORD_2), OUTPUT), ... ] }
+# Note: LEAD is KC.F24 in your config.
+# Pos 8 is 'O' (top right), Pos 9 is 'P' (top far right)
+LEADER_SEQUENCES = {
+    LEAD: [
+        # Example: Leader -> Pos 8 -> Pos 9 = Output 'c'
+        ((8, 9), KC.C),
+        
+        # Example: Leader -> Q(0) -> W(1) = Output Macro "Hello"
+        ((0, 1), KC.MACRO("Hello")),
+        ((7,), KC.MACRO("Nock Nock")),
+ 
+    ]
+}
+
 
 # -------------------------------------------------------------------------
 # 6. MACROS
@@ -247,24 +301,3 @@ COMBO_LIST = [
     Chord((US_DQUO, KC.COLN), MACRO_DBL),
     Chord((US_GRV,  US_TILD), MACRO_GRV),
 ]
-
-# Dynamically add Abbreviations to COMBO_LIST
-for trigger, content in abbrevs.items():
-    # 1. Convert trigger text to KeyCodes (e.g. "al" -> KC.A, KC.L)
-    trigger_seq = get_seq_from_string(trigger)
-    
-    # 2. Prepend the Leader Key (F23)
-    full_sequence = (LEAD_AB,) + trigger_seq
-    
-    # 3. Create Sequence
-    # Check if content is a List/Tuple (Complex) or String (Simple)
-    if isinstance(content, (list, tuple)):
-        # Unpack the list into the Macro: KC.MACRO("H", OE, "r")
-        COMBO_LIST.append(
-            Sequence(full_sequence, KC.MACRO(*content), timeout=2000)
-        )
-    else:
-        # Standard string: KC.MACRO("Jon Arne")
-        COMBO_LIST.append(
-            Sequence(full_sequence, KC.MACRO(content), timeout=2000)
-        )
