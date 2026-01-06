@@ -15,16 +15,16 @@ LAYERS = [
 
     # LAYER 1: SYM
     [
-        KC.PLUS, KC.EXLM, KC.SCLN, US_QUOT, KC.ASTR,     KC.COMM, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
-        KC.MINS, KC.QUES, KC.COLN, US_DQUO, KC.SLSH,     KC.DOT,  KC.ESC,  OS_LCTL, OS_LALT, OS_LGUI,
+        KC.PLUS, KC.EXLM, KC.SCLN, US_QUOT, KC.ASTR,     KC.HASH, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
+        KC.MINS, KC.QUES, KC.COLN, US_DQUO, KC.SLSH,     KC.COMM, KC.DOT,  OS_LCTL, OS_LALT, OS_LGUI,
         KC.PERC, US_TILD, KC.PIPE, US_GRV,  KC.EQL,      KC.UNDS, KC.LABK, KC.RABK, KC.LBRC, KC.RBRC,
         XXXX,    XXXX,    US_CIRC, KC.AT,   KC.BSLS,     KC.AMPR, KC.DEL,  KC.DLR,  XXXX,    XXXX,
     ],
 
     # LAYER 2: NUM
     [
-        KC.PLUS, KC.N7,   KC.N8,   KC.N9,   KC.ASTR,     KC.COMM, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
-        KC.MINS, KC.N3,   KC.N2,   KC.N1,   KC.SLSH,     KC.DOT,  OS_LSFT, OS_LCTL, OS_LALT, OS_LGUI,
+        KC.PLUS, KC.N7,   KC.N8,   KC.N9,   KC.ASTR,     KC.HASH, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
+        KC.MINS, KC.N3,   KC.N2,   KC.N1,   KC.SLSH,     KC.COMM, KC.ESC,  OS_LCTL, OS_LALT, OS_LGUI,
         KC.PERC, KC.N4,   KC.N5,   KC.N6,   KC.EQL,      KC.UNDS, KC.TAB,  KC.RABK, KC.LBRC, KC.RBRC,
         XXXX,    XXXX,    KC.N0,   KC.SPC,  KC.CW,       KC.CAPS, KC.DEL,  FUN_SK,  XXXX,    XXXX,
     ],
@@ -41,8 +41,8 @@ LAYERS = [
     [
         XXXX,    SelAll,  XXXX,    XXXX,    XXXX,        KC.HOME, KC.PGDN, KC.PGUP, KC.END,  Redo,
         OS_LGUI, OS_LALT, OS_LCTL, OS_LSFT, XXXX,        KC.LEFT, KC.DOWN, KC.UP,   KC.RGHT, Undo,
-        XXXX,    XXXX,    Copy,    Paste,   XXXX,        WordL,   KC.TAB,  ALT_TAB, WordR,   XXXX,
-        XXXX,    Cut,     TRNS,    TRNS,    XXXX,        TRNS,    TRNS,    XXXX,    XXXX,    XXXX,
+        XXXX,    Cut,     Copy,    PasteU,  Paste,       WordL,   KC.TAB,  ALT_TAB, WordR,   XXXX,
+        XXXX,    XXXX,    TRNS,    TRNS,    XXXX,        TRNS,    TRNS,    XXXX,    XXXX,    XXXX,
     ]
 ]
 

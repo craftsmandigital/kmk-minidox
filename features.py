@@ -225,6 +225,7 @@ OS_LGUI = KC.SK(KC.LGUI)
 # Nav Shortcuts
 SelAll  = KC.LCTL(KC.A)
 Paste   = KC.LCTL(KC.V)
+PasteU  = KC.LSFT(Paste)
 Copy    = KC.LCTL(KC.C)
 Cut     = KC.LCTL(KC.X)
 Undo    = KC.LCTL(KC.Z)
