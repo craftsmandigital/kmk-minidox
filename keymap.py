@@ -1,5 +1,6 @@
 from kmk.keys import KC
-from features import *
+from behaviors import *
+from macros import *
 
 # -------------------------------------------------------------------------
 # KEYMAP GRID
