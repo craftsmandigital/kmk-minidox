@@ -1,5 +1,5 @@
 from kmk.keys import KC
-from kmk.modules.macros import Tap
+# from kmk.modules.macros import Tap
 from extensions import StickyLeader
 
 # --- Layer Indices ---
@@ -64,19 +64,3 @@ MAP_R = {
 
 # Initialize the module instance
 sticky_leader_mod = StickyLeader(trigger_key=LEAD, left_map=MAP_L, right_map=MAP_R)
-
-
-# --- Sequence Leader Configuration ---
-# Format: { LEADER_KEY: [ ((COORD_1, COORD_2), OUTPUT), ... ] }
-LEADER_SEQUENCES = {
-    LEAD: [
-        # Leader -> Pos 26 (M) -> Pos 12 (D)
-        ((26, 12), KC.MACRO("idibidi", Tap(KC.ENT), "dabada", Tap(KC.ENT))),
-        
-        # Leader -> Pos 0 (Q) -> Pos 1 (W)
-        ((0, 1), KC.MACRO("Hello")),
-        
-        # Leader -> Pos 7 (I)
-        ((7,), KC.MACRO("Nock Nock")),
-    ]
-}

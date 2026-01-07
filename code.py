@@ -42,6 +42,7 @@ keyboard.modules.append(sticky_mod)
 # AFTER the modules above are initialized.
 import behaviors
 import combos
+import sequences
 import keymap
 from extensions import apply_leader_sequences
 
@@ -56,7 +57,7 @@ combos_mod.combos = combos.COMBO_LIST
 keyboard.keymap = keymap.LAYERS
 
 # 7. Generate Leader Sequences
-apply_leader_sequences(keyboard, behaviors.LEADER_SEQUENCES, combos_mod)
+apply_leader_sequences(keyboard, sequences.LEADER_SEQUENCES, combos_mod)
 
 if __name__ == '__main__':
     keyboard.go()
