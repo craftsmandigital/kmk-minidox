@@ -108,14 +108,14 @@ class StickyLeader(Module):
 
 
 class LayerColorRGB(Module):
-    def __init__(self, pixel_pin, num_pixels, caps_word_mod=None):
-        # brightness=0.1 is roughly 10% brightness
-        self.strip = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.06, auto_write=False)
+    def __init__(self, pixel_pin, num_pixels, caps_word_mod=None, lock_status_ext=None):
+        self.strip = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.1, auto_write=False)
         self.caps_word_mod = caps_word_mod
+        self.lock_status_ext = lock_status_ext 
         self.last_color = None 
 
     def during_bootup(self, keyboard):
-        # Boot Test: Flash RED
+        # Flash RED on boot
         self.strip.fill((255, 0, 0))
         self.strip.show()
 
@@ -123,51 +123,60 @@ class LayerColorRGB(Module):
         return
 
     def after_matrix_scan(self, keyboard):
-        # 1. Determine Target Color
-        target_color = (0, 0, 0) # Default: Off
+        target_color = (0, 0, 0) # Default
 
-        # Check Caps Word
-        is_caps_word = False
-        if self.caps_word_mod:
-            # Safe check for active state
-
-            if getattr(self.caps_word_mod, '_active', False) or getattr(self.caps_word_mod, 'active', False):
-                is_caps_word = True
-
-
-        if is_caps_word:
-            target_color = (255, 255, 255) # White
-        else:
-            # Check Layers
-            # Get the highest active layer
-            # top_layer = keyboard.active_layers[-1]
-            top_layer = keyboard.active_layers[0]
+        # -----------------------------------------------------------------
+        # 1. Check Layers (Highest Priority)
+        # -----------------------------------------------------------------
+        top_layer = 0
+        if keyboard.active_layers:
+            top_layer = max(keyboard.active_layers)
+        
+        if top_layer == 4:     # NAV
+            target_color = (255, 0, 0)   # Red
+        elif top_layer == 2:   # NUM
+            target_color = (0, 0, 255)   # Blue
+        elif top_layer == 1:   # SYM
+            target_color = (0, 255, 0)   # Green
             
-            if top_layer == 4:   # NAV
-                target_color = (255, 0, 0)   # Red
-            elif top_layer == 2: # NUM
-                target_color = (0, 0, 255)   # Blue
-            elif top_layer == 1: # SYM
-                target_color = (0, 255, 0)   # Green
-            else: 
-                # BASE LAYER (0)
-                target_color = (0, 0, 0) 
+        else: 
+            # -------------------------------------------------------------
+            # 2. Base Layer Logic (Layer 0)
+            # -------------------------------------------------------------
+            is_caps_on = False
 
-        # 2. Update LEDs only if color changed
+            # A. Check Standard Caps Lock
+            if self.lock_status_ext and self.lock_status_ext.get_caps_lock():
+                is_caps_on = True
+                
+            # B. Check Caps Word
+            if not is_caps_on and self.caps_word_mod:
+                # FIX: Check '_cw_active' based on your debug output
+                if getattr(self.caps_word_mod, '_cw_active', False):
+                    is_caps_on = True
+                # Fallback checks for other versions
+                elif getattr(self.caps_word_mod, '_active', False):
+                    is_caps_on = True
+                elif getattr(self.caps_word_mod, 'active', False):
+                    is_caps_on = True
+
+            if is_caps_on:
+                target_color = (255, 255, 255) # White
+            else:
+                target_color = (0, 0, 0)       # Off
+
+        # -----------------------------------------------------------------
+        # 3. Update LEDs
+        # -----------------------------------------------------------------
         if target_color != self.last_color:
-            # --- DEBUG PRINT ---
-            # This will show up in Thonny when the color changes!
-            print(f"RGB UPDATE: Layer={keyboard.active_layers}, Color={target_color}")
-            
+            # Debug print
+            print(f"RGB UPDATE: Layer={top_layer}, Color={target_color}")
             self.strip.fill(target_color)
             self.strip.show()
             self.last_color = target_color
 
     def before_hid_send(self, keyboard): return
     def after_hid_send(self, keyboard): return
-
-
-
 
 
 # -------------------------------------------------------------------------
