@@ -2,7 +2,8 @@ import supervisor
 from kmk.keys import KC
 from kmk.modules import Module
 from kmk.modules.combos import Sequence
-
+# from kmk.extensions.rgb import RGB
+import neopixel
 # -------------------------------------------------------------------------
 # Custom Module: Sticky Leader
 # -------------------------------------------------------------------------
@@ -97,6 +98,77 @@ class StickyLeader(Module):
                 return None
 
         return key
+
+
+# -------------------------------------------------------------------------
+# Custom Module: LayerColorRGB Extension
+# Direct Control RGB Module
+# read RGB_HELP.md for dock
+# -------------------------------------------------------------------------
+
+
+class LayerColorRGB(Module):
+    def __init__(self, pixel_pin, num_pixels, caps_word_mod=None):
+        # brightness=0.1 is roughly 10% brightness
+        self.strip = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.06, auto_write=False)
+        self.caps_word_mod = caps_word_mod
+        self.last_color = None 
+
+    def during_bootup(self, keyboard):
+        # Boot Test: Flash RED
+        self.strip.fill((255, 0, 0))
+        self.strip.show()
+
+    def before_matrix_scan(self, keyboard):
+        return
+
+    def after_matrix_scan(self, keyboard):
+        # 1. Determine Target Color
+        target_color = (0, 0, 0) # Default: Off
+
+        # Check Caps Word
+        is_caps_word = False
+        if self.caps_word_mod:
+            # Safe check for active state
+
+            if getattr(self.caps_word_mod, '_active', False) or getattr(self.caps_word_mod, 'active', False):
+                is_caps_word = True
+
+
+        if is_caps_word:
+            target_color = (255, 255, 255) # White
+        else:
+            # Check Layers
+            # Get the highest active layer
+            # top_layer = keyboard.active_layers[-1]
+            top_layer = keyboard.active_layers[0]
+            
+            if top_layer == 4:   # NAV
+                target_color = (255, 0, 0)   # Red
+            elif top_layer == 2: # NUM
+                target_color = (0, 0, 255)   # Blue
+            elif top_layer == 1: # SYM
+                target_color = (0, 255, 0)   # Green
+            else: 
+                # BASE LAYER (0)
+                target_color = (0, 0, 0) 
+
+        # 2. Update LEDs only if color changed
+        if target_color != self.last_color:
+            # --- DEBUG PRINT ---
+            # This will show up in Thonny when the color changes!
+            print(f"RGB UPDATE: Layer={keyboard.active_layers}, Color={target_color}")
+            
+            self.strip.fill(target_color)
+            self.strip.show()
+            self.last_color = target_color
+
+    def before_hid_send(self, keyboard): return
+    def after_hid_send(self, keyboard): return
+
+
+
+
 
 # -------------------------------------------------------------------------
 # Sequence Generator Logic

@@ -1,3 +1,4 @@
+# https://github.com/craftsmandigital/kmk-minidox
 print("--- STARTING KEYBOARD ---")
 
 import board
@@ -44,13 +45,26 @@ import behaviors
 import combos
 import sequences
 import keymap
-from extensions import apply_leader_sequences
+from extensions import apply_leader_sequences, LayerColorRGB 
 
 # 5. Register Custom Modules
 #    StickyLeader must run BEFORE HoldTap
 keyboard.modules.append(behaviors.sticky_leader_mod)
 keyboard.modules.append(holdtap) 
 keyboard.modules.append(caps_word)
+
+# -------------------------------------------------------------------------
+# 6. Configure RGB (Direct Control)
+# -------------------------------------------------------------------------
+# We pass 'caps_word' so the lights can react to it
+rgb = LayerColorRGB(
+    pixel_pin=keyboard.rgb_pixel_pin,
+    num_pixels=keyboard.num_pixels,
+    caps_word_mod=caps_word
+)
+
+# IMPORTANT: Use modules.append, NOT extensions.append
+keyboard.modules.append(rgb)
 
 # 6. Apply Configuration
 combos_mod.combos = combos.COMBO_LIST

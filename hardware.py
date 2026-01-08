@@ -17,6 +17,13 @@ class DactylMinidox(KMKKeyboard):
         self.row_pins = (board.GP6, board.GP7, board.GP8, board.GP9)
         self.diode_orientation = DiodeOrientation.COL2ROW
 
+
+        # --- RGB CONFIGURATION (NEW) ---
+        # CHANGE THIS PIN to match your soldering!
+        self.rgb_pixel_pin = board.GP16 
+        # Total LEDs (Left + Right if chained, or just one side count if mirrored)
+        self.num_pixels = 8         
+
         # ---------------------------------------------------------------------
         # 2. SPLIT CONFIGURATION
         # ---------------------------------------------------------------------
