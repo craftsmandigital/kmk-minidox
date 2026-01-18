@@ -40,7 +40,7 @@ LAYERS = [
         KC.PLUS, KC.N7,   KC.N8,   KC.N9,   KC.ASTR,     KC.HASH, KC.LPRN, KC.RPRN, KC.LCBR, KC.RCBR,
         KC.MINS, KC.N3,   KC.N2,   KC.N1,   KC.SLSH,     KC.COMM, KC.ESC,  OS_LCTL, OS_LALT, OS_LGUI,
         KC.PERC, KC.N4,   KC.N5,   KC.N6,   KC.EQL,      KC.UNDS, KC.TAB,  KC.RABK, KC.LBRC, KC.RBRC,
-        XXXX,    XXXX,    KC.N0,   KC.SPC,  KC.CW,       KC.CAPS, KC.DEL,  FUN_SK,  XXXX,    XXXX,
+        XXXX,    XXXX,    KC.N0,   KC.SPC,  KC.CW,       KC.CAPS, KC.BSPC, FUN_SK,  XXXX,    XXXX,
     ],
 
     # LAYER 3: FUN
@@ -54,8 +54,8 @@ LAYERS = [
     # LAYER 4: NAV
     [
         XXXX,    SelAll,  XXXX,    XXXX,    XXXX,        KC.HOME, KC.PGDN, KC.PGUP, KC.END,  Redo,
-        OS_LGUI, OS_LALT, OS_LCTL, OS_LSFT, XXXX,        KC.LEFT, KC.DOWN, KC.UP,   KC.RGHT, Undo,
-        XXXX,    Cut,     Copy,    PasteU,  Paste,       WordL,   KC.TAB,  ALT_TAB, WordR,   XXXX,
+        OS_LGUI, OS_LALT, OS_LCTL, OS_LSFT, PasteM,      KC.LEFT, KC.DOWN, KC.UP,   KC.RGHT, Undo,
+        XXXX,    Cut,     Copy,    PasteU,  Paste,       WordL,   KC.TAB,  ALT_TAB, WordR,   RClick,
         XXXX,    XXXX,    TRNS,    TRNS,    XXXX,        TRNS,    TRNS,    XXXX,    XXXX,    XXXX,
     ]
 ]

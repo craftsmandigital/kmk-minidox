@@ -35,6 +35,7 @@ OS_LGUI = KC.SK(KC.LGUI)
 SelAll  = KC.LCTL(KC.A)
 Paste   = KC.LCTL(KC.V)
 PasteU  = KC.LSFT(Paste)
+PasteM  = KC.LCTL(KC.G) # this is chortcut to my clipboard manager
 Copy    = KC.LCTL(KC.C)
 Cut     = KC.LCTL(KC.X)
 Undo    = KC.LCTL(KC.Z)
@@ -42,6 +43,8 @@ Redo    = KC.LCTL(KC.Y)
 ALT_TAB = KC.SM(KC.TAB, KC.LALT)
 WordR   = KC.LCTL(KC.RIGHT)
 WordL   = KC.LCTL(KC.LEFT)
+RClick  = KC.LSFT(KC.F10)
+
 
 # Aliases
 TRNS = KC.TRNS
