@@ -1,5 +1,5 @@
 from kmk.keys import KC
-# from kmk.modules.macros import Tap
+from kmk.modules.macros import Tap
 from extensions import StickyLeader
 
 # --- Layer Indices ---
@@ -20,8 +20,16 @@ NO_OE = KC.RALT(KC.L)
 NO_AA = KC.RALT(KC.W)
 
 # Sticky / Hold-Tap
-SYM_SK  = KC.SK(KC.MO(LAYER_SYM))
-NUM_SK  = KC.SK(KC.MO(LAYER_NUM))
+# SYM_SK  = KC.SK(KC.MO(LAYER_SYM))
+# NUM_SK  = KC.SK(KC.MO(LAYER_NUM))
+# Tap = LEAD, Hold = Momentary Layer NUM
+# NUM_LEAD_LT = KC.LT(LAYER_NUM, LEAD)
+# NUM_LEAD_LT  = KC.SK(KC.MO(LAYER_NUM))
+# NUM_LEAD_LT = KC.HT(LEAD, KC.MO(LAYER_NUM), prefer_hold=True) 
+# NUM_LEAD_LT = KC.HT(KC.SK(LAYER_SYM), KC.MO(LAYER_NUM)) 
+# NUM_LEAD_LT = KC.HT(KC.SK(LAYER_SYM), KC.MO(LAYER_NUM)) 
+# Alternative (only if OSL doesn't work)
+SYM_NUM_HT = KC.HT(KC.SK(KC.MO(LAYER_SYM)), KC.MO(LAYER_NUM))
 FUN_SK  = KC.SK(KC.MO(LAYER_FUN))
 NAV_HT  = KC.HT(KC.TG(LAYER_NAV), KC.MO(LAYER_NAV)) 
 

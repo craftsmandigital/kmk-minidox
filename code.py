@@ -54,8 +54,9 @@ from extensions import apply_leader_sequences, LayerColorRGB
 
 # 5. Register Custom Modules
 #    StickyLeader must run BEFORE HoldTap
+feyboard.modules.append(holdtap) 
 keyboard.modules.append(behaviors.sticky_leader_mod)
-keyboard.modules.append(holdtap) 
+# keyboard.modules.append(holdtap) 
 keyboard.modules.append(caps_word)
 
 # -------------------------------------------------------------------------
