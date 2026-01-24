@@ -12,7 +12,7 @@ from kmk.modules.combos import Combos
 from kmk.modules.macros import Macros
 from kmk.modules.sticky_keys import StickyKeys
 from kmk.modules.sticky_mod import StickyMod
-from kmk.modules.capsword import CapsWord
+# from kmk.modules.capsword import CapsWord
 from kmk.extensions.lock_status import LockStatus  # Need this for LED stuff to test on CAPSLOCK
 
 # 1. Initialize Hardware
@@ -27,8 +27,10 @@ combos_mod = Combos()
 macros = Macros()
 sticky_keys = StickyKeys(release_after=3000)
 sticky_mod = StickyMod()
-caps_word = CapsWord()
+# caps_word = CapsWord()
 lock_status = LockStatus() # <--- NEW: Initialize LockStatus
+
+
 
 # 3. Register Modules
 #    Order matters: Layers -> Combos -> Macros -> StickyKeys
@@ -54,10 +56,14 @@ from extensions import apply_leader_sequences, LayerColorRGB
 
 # 5. Register Custom Modules
 #    StickyLeader must run BEFORE HoldTap
-feyboard.modules.append(holdtap) 
+keyboard.modules.append(holdtap) 
 keyboard.modules.append(behaviors.sticky_leader_mod)
+keyboard.modules.append(behaviors.magic_key_mod) # <--- NEW: Register Magic Key
 # keyboard.modules.append(holdtap) 
-keyboard.modules.append(caps_word)
+keyboard.modules.append(behaviors.caps_word)
+
+
+
 
 # -------------------------------------------------------------------------
 # 6. Configure RGB (Direct Control)
@@ -66,7 +72,7 @@ keyboard.modules.append(caps_word)
 rgb = LayerColorRGB(
     pixel_pin=keyboard.rgb_pixel_pin,
     num_pixels=keyboard.num_pixels,
-    caps_word_mod=caps_word,
+    caps_word_mod=behaviors.caps_word,
     lock_status_ext=lock_status # <--- NEW: Pass LockStatus to RGB
 )
 

@@ -4,6 +4,174 @@ from kmk.modules import Module
 from kmk.modules.combos import Sequence
 # from kmk.extensions.rgb import RGB
 import neopixel
+
+
+
+
+
+# -------------------------------------------------------------------------
+# Custom Module: MagicKey
+# -------------------------------------------------------------------------
+
+# Helper Class for Sequences (Keep this if you use Seq)
+class Seq:
+
+    def __init__(self, *keys):
+        self.keys = keys
+    def __hash__(self):
+        return hash(self.keys)
+    def __eq__(self, other):
+        return isinstance(other, Seq) and self.keys == other.keys
+
+class MagicKey(Module):
+
+    def __init__(self, magic_key, triggers, default_behavior, max_history=10):
+        self.magic_key = magic_key
+        self.triggers = triggers
+        self.current_behavior = default_behavior
+        self.buffer = [] 
+        self.max_history = max_history
+
+    def during_bootup(self, keyboard): return
+    def before_matrix_scan(self, keyboard): return
+    def after_matrix_scan(self, keyboard): return
+    def before_hid_send(self, keyboard): return
+    def after_hid_send(self, keyboard): return
+
+    def keys_match(self, k1, k2):
+        if k1 == k2: return True
+        c1 = getattr(k1, 'code', None)
+        c2 = getattr(k2, 'code', None)
+        if c1 is not None and c2 is not None and c1 == c2: return True
+        return str(k1) == str(k2)
+
+    def buffer_matches_sequence(self, seq_keys):
+        if len(self.buffer) < len(seq_keys): return False
+        snippet = self.buffer[-len(seq_keys):]
+        for i, k in enumerate(seq_keys):
+            if not self.keys_match(snippet[i], k): return False
+        return True
+
+    def find_trigger_result(self, key_to_check):
+        # Helper to find if a key matches any trigger
+        for trigger, result in self.triggers.items():
+            if isinstance(trigger, Seq):
+
+                # Sequences are handled in the buffer logic, not here
+                continue 
+            elif isinstance(trigger, (tuple, list)):
+                if any(self.keys_match(key_to_check, t) for t in trigger):
+                    return result
+            elif self.keys_match(key_to_check, trigger):
+                return result
+        return None
+
+    def process_key(self, keyboard, key, is_pressed, int_coord):
+        # 1. Handle the Magic Key itself
+        if self.keys_match(key, self.magic_key):
+            if is_pressed:
+                # Get the behavior we are about to send
+                to_send = self.current_behavior
+                
+                # --- NEW: SELF-ADVANCING LOGIC ---
+                # Check if the output we are sending is ITSELF a trigger for the next state
+                next_state = self.find_trigger_result(to_send)
+                if next_state:
+                    self.current_behavior = next_state
+                
+                return to_send
+            return None # Handle release if needed, or just None
+
+        # 2. Listen for External Triggers (Only on Press)
+        if is_pressed:
+            self.buffer.append(key)
+            if len(self.buffer) > self.max_history:
+                self.buffer.pop(0)
+
+
+            # Check Sequences first
+            match_found = False
+            for trigger, result in self.triggers.items():
+                if isinstance(trigger, Seq):
+                    if self.buffer_matches_sequence(trigger.keys):
+                        self.current_behavior = result
+                        match_found = True
+                        break
+            
+            # If no sequence matched, check standard keys
+            if not match_found:
+                res = self.find_trigger_result(key)
+                if res:
+                    self.current_behavior = res
+
+        return key
+
+
+
+
+
+
+#
+# class MagicKey(Module):
+#     def __init__(self, magic_key, triggers, default_behavior):
+#         self.magic_key = magic_key
+#
+#         self.triggers = triggers
+#         self.current_behavior = default_behavior
+#
+#     def during_bootup(self, keyboard): return
+#     def before_matrix_scan(self, keyboard): return
+#     def after_matrix_scan(self, keyboard): return
+#     def before_hid_send(self, keyboard): return
+#     def after_hid_send(self, keyboard): return
+#
+#     def keys_match(self, k1, k2):
+#         if k1 == k2: return True
+#         c1 = getattr(k1, 'code', None)
+#         c2 = getattr(k2, 'code', None)
+#         if c1 is not None and c2 is not None and c1 == c2: return True
+#         return str(k1) == str(k2)
+#
+#     def process_key(self, keyboard, key, is_pressed, int_coord):
+#
+#         # 1. Handle the Magic Key itself
+#         if self.keys_match(key, self.magic_key):
+#             return self.current_behavior
+#
+#         # 2. Listen for Triggers (Only on Press)
+#         if is_pressed:
+#             for trigger, result in self.triggers.items():
+#                 # --- NEW: Support for multiple keys (Tuples) ---
+#                 if isinstance(trigger, (tuple, list)):
+#                     # Check if the pressed key matches ANY key in the tuple
+#                     if any(self.keys_match(key, t) for t in trigger):
+#                         self.current_behavior = result
+#                         break
+#                 # --- OLD: Support for single keys ---
+#                 elif self.keys_match(key, trigger):
+#                     self.current_behavior = result
+#                     break
+#
+#         return key
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # -------------------------------------------------------------------------
 # Custom Module: Sticky Leader
 # -------------------------------------------------------------------------
