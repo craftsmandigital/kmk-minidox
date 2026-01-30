@@ -114,12 +114,16 @@ MAGIC_TRIGGERS = {
     # Action: Move Right (outside the pair), then add a Space
     # Result: "(bla bla bla|)" -> "(bla bla bla) |"
     (MACRO_PAR, MACRO_CRL, MACRO_SQR, MACRO_ANG, MACRO_QUO, MACRO_DBL, MACRO_GRV): KC.MACRO(Tap(KC.RIGHT), Tap(KC.SPC)), 
-    # Scenario 4: Reset
-    # If I press Space, Magic Key resets to Backspace (example)
-    # KC.SPC: KC.BSPC,
 
-    # Home -> Magic Key selects to end of line
-    KC.HOME: KC.LSFT(KC.END),
+    # Simple Brackets (Single Key Triggers)
+    KC.LCBR: KC.MACRO(Tap(KC.RCBR), Tap(KC.SPC)), 
+    KC.LPRN: KC.MACRO(Tap(KC.RPRN), Tap(KC.SPC)), 
+    KC.LBRC: KC.MACRO(Tap(KC.RBRC), Tap(KC.SPC)),
+    KC.LABK: KC.MACRO(Tap(KC.RABK), Tap(KC.SPC)),
+    # The "dead" keys uner is completly inposible to get to work
+    # Single Quote '
+    # Double Quote "
+    # Grave `
 
 
     # 3. Trigger: You type "def" (Python)
@@ -129,23 +133,37 @@ MAGIC_TRIGGERS = {
     ),
 
     # -------------------------------------------------------------------------
-    # WORKFLOW A: The "Clipboard Loop"
+    # WORKFLOW: The "Clipboard Loop"
     # Story: Copy -> Switch App -> Paste -> Done
     # -------------------------------------------------------------------------
+    # --- 1. The Specific Exception (High Priority) ---
+    # The code checks this FIRST.
+    # If history is exactly [Copy, Alt-Tab], it forces Paste.
+    Seq(Copy, ALT_TAB): Paste,
+
+    # --- 2. The Entry Point ---
+    # If I just Copied, prepare to switch.
+    Copy: ALT_TAB,
+
+    # --- 3. The General Rule (Low Priority) ---
+    # If I Alt-Tab (and it wasn't the specific copy-paste scenario above),
+    # keep the Magic Key as a switcher. 
+    # This works even if you typed other keys in between switches.
+    ALT_TAB_X: ALT_TAB,
+
+    # -------------------------------------------------------------------------
+    # WORKFLOW: The "Close many windows"
+    # -------------------------------------------------------------------------
+    # Close next window after Alt-Tabing
+    Seq(KC.LALT(KC.F4), ALT_TAB_X): KC.LALT(KC.F4),
+    # Close again
+    KC.LALT(KC.F4): KC.LALT(KC.F4),
+
+    # -------------------------------------------------------------------------
+    # WORKFLOW: The "Starting a bunch of apps"
+    # ------------------------------------------------------------------------
+    KC.LALT(KC.SPC): KC.LALT(KC.SPC),
     
-    # 1. Trigger: You press Copy (Ctrl+C)
-    #    Magic Key becomes: Alt+Tab (Switch Window)
-    (Copy, Paste): ALT_TAB,
-
-    # 2. Trigger: You press Alt+Tab (Switching apps)
-    #    Magic Key becomes: Paste (Ctrl+V)
-    ALT_TAB: Paste,
-
-    # 3. Trigger: You press Paste (Ctrl+V)
-    #    Magic Key becomes: Enter (To submit the form/command)
-    # Paste: KC.ENT,
-
-
 }
 
 # Initialize the module

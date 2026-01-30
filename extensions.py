@@ -23,8 +23,9 @@ class Seq:
     def __eq__(self, other):
         return isinstance(other, Seq) and self.keys == other.keys
 
-class MagicKey(Module):
 
+
+class MagicKey(Module):
     def __init__(self, magic_key, triggers, default_behavior, max_history=10):
         self.magic_key = magic_key
         self.triggers = triggers
@@ -53,12 +54,8 @@ class MagicKey(Module):
         return True
 
     def find_trigger_result(self, key_to_check):
-        # Helper to find if a key matches any trigger
         for trigger, result in self.triggers.items():
-            if isinstance(trigger, Seq):
-
-                # Sequences are handled in the buffer logic, not here
-                continue 
+            if isinstance(trigger, Seq): continue 
             elif isinstance(trigger, (tuple, list)):
                 if any(self.keys_match(key_to_check, t) for t in trigger):
                     return result
@@ -66,40 +63,47 @@ class MagicKey(Module):
                 return result
         return None
 
+    # --- NEW HELPER ---
+    def check_buffer_for_sequences(self):
+        for trigger, result in self.triggers.items():
+            if isinstance(trigger, Seq):
+                if self.buffer_matches_sequence(trigger.keys):
+                    self.current_behavior = result
+                    return True
+        return False
+
     def process_key(self, keyboard, key, is_pressed, int_coord):
         # 1. Handle the Magic Key itself
         if self.keys_match(key, self.magic_key):
             if is_pressed:
-                # Get the behavior we are about to send
                 to_send = self.current_behavior
                 
-                # --- NEW: SELF-ADVANCING LOGIC ---
-                # Check if the output we are sending is ITSELF a trigger for the next state
-                next_state = self.find_trigger_result(to_send)
-                if next_state:
-                    self.current_behavior = next_state
+                # --- CRITICAL UPDATE: Add Output to Buffer ---
+                # This allows Seq(Copy, ALT_TAB) to work when Magic Key outputs ALT_TAB
+                self.buffer.append(to_send)
+                if len(self.buffer) > self.max_history: self.buffer.pop(0)
+
+                # 1. Check if the new buffer matches a Sequence
+                seq_found = self.check_buffer_for_sequences()
+
+                # 2. If no sequence, check if the single key triggers a change
+                if not seq_found:
+                    next_state = self.find_trigger_result(to_send)
+                    if next_state:
+                        self.current_behavior = next_state
                 
                 return to_send
-            return None # Handle release if needed, or just None
+            return None 
+
 
         # 2. Listen for External Triggers (Only on Press)
         if is_pressed:
             self.buffer.append(key)
-            if len(self.buffer) > self.max_history:
-                self.buffer.pop(0)
+            if len(self.buffer) > self.max_history: self.buffer.pop(0)
 
-
-            # Check Sequences first
-            match_found = False
-            for trigger, result in self.triggers.items():
-                if isinstance(trigger, Seq):
-                    if self.buffer_matches_sequence(trigger.keys):
-                        self.current_behavior = result
-                        match_found = True
-                        break
-            
-            # If no sequence matched, check standard keys
-            if not match_found:
+            # Check Sequences
+            if not self.check_buffer_for_sequences():
+                # If no sequence, check Single Keys
                 res = self.find_trigger_result(key)
                 if res:
                     self.current_behavior = res
@@ -108,16 +112,14 @@ class MagicKey(Module):
 
 
 
-
-
-
-#
 # class MagicKey(Module):
-#     def __init__(self, magic_key, triggers, default_behavior):
-#         self.magic_key = magic_key
 #
+#     def __init__(self, magic_key, triggers, default_behavior, max_history=10):
+#         self.magic_key = magic_key
 #         self.triggers = triggers
 #         self.current_behavior = default_behavior
+#         self.buffer = [] 
+#         self.max_history = max_history
 #
 #     def during_bootup(self, keyboard): return
 #     def before_matrix_scan(self, keyboard): return
@@ -132,27 +134,67 @@ class MagicKey(Module):
 #         if c1 is not None and c2 is not None and c1 == c2: return True
 #         return str(k1) == str(k2)
 #
-#     def process_key(self, keyboard, key, is_pressed, int_coord):
+#     def buffer_matches_sequence(self, seq_keys):
+#         if len(self.buffer) < len(seq_keys): return False
+#         snippet = self.buffer[-len(seq_keys):]
+#         for i, k in enumerate(seq_keys):
+#             if not self.keys_match(snippet[i], k): return False
+#         return True
 #
+#     def find_trigger_result(self, key_to_check):
+#         # Helper to find if a key matches any trigger
+#         for trigger, result in self.triggers.items():
+#             if isinstance(trigger, Seq):
+#
+#                 # Sequences are handled in the buffer logic, not here
+#                 continue 
+#             elif isinstance(trigger, (tuple, list)):
+#                 if any(self.keys_match(key_to_check, t) for t in trigger):
+#                     return result
+#             elif self.keys_match(key_to_check, trigger):
+#                 return result
+#         return None
+#
+#     def process_key(self, keyboard, key, is_pressed, int_coord):
 #         # 1. Handle the Magic Key itself
 #         if self.keys_match(key, self.magic_key):
-#             return self.current_behavior
+#             if is_pressed:
+#                 # Get the behavior we are about to send
+#                 to_send = self.current_behavior
 #
-#         # 2. Listen for Triggers (Only on Press)
+#                 # --- NEW: SELF-ADVANCING LOGIC ---
+#                 # Check if the output we are sending is ITSELF a trigger for the next state
+#                 next_state = self.find_trigger_result(to_send)
+#                 if next_state:
+#                     self.current_behavior = next_state
+#
+#                 return to_send
+#             return None # Handle release if needed, or just None
+#
+#         # 2. Listen for External Triggers (Only on Press)
 #         if is_pressed:
+#             self.buffer.append(key)
+#             if len(self.buffer) > self.max_history:
+#                 self.buffer.pop(0)
+#
+#
+#             # Check Sequences first
+#             match_found = False
 #             for trigger, result in self.triggers.items():
-#                 # --- NEW: Support for multiple keys (Tuples) ---
-#                 if isinstance(trigger, (tuple, list)):
-#                     # Check if the pressed key matches ANY key in the tuple
-#                     if any(self.keys_match(key, t) for t in trigger):
+#                 if isinstance(trigger, Seq):
+#                     if self.buffer_matches_sequence(trigger.keys):
 #                         self.current_behavior = result
+#                         match_found = True
 #                         break
-#                 # --- OLD: Support for single keys ---
-#                 elif self.keys_match(key, trigger):
-#                     self.current_behavior = result
-#                     break
+#
+#             # If no sequence matched, check standard keys
+#             if not match_found:
+#                 res = self.find_trigger_result(key)
+#                 if res:
+#                     self.current_behavior = res
 #
 #         return key
+#
 
 
 
