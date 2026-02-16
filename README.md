@@ -84,11 +84,13 @@ To allow identical firmware on both sides, the **Right Half** columns must be ph
 
 ### 🚥 The "Led strip" Wiring
 
-| LED Strip Wire   | Purpose                        | Connects to Pico Pin              | Physical Pin Number |
-| ---------------- | ------------------------------ | --------------------------------- | ------------------- |
-| **Power (+5V)**  | Provides 5V power to the LEDs  | **VBUS**                          | **Pin 40**          |
-| **Data (DIN)**   | Sends color/brightness signals | Any GPIO pin, e.g., **GP0**       | **Pin 1**           |
-| **Ground (GND)** | Common electrical ground       | Any **GND** pin, e.g., the one at | **Pin 38**          |
+
+| LED Strip Wire   | Wire collor | Purpose                        | Connects to Pico Pin              | Physical Pin Number |
+| ---------------- | ----------- | ------------------------------ | --------------------------------- | ------------------- |
+| **Power (+5V)**  | Brown       | Provides 5V power to the LEDs  | **VBUS**                          | **Pin 40**          |
+| **Data (DIN)**   | Green       | Sends color/brightness signals | Any GPIO pin, e.g., **GP0**       | **Pin 1**           |
+| **Ground (GND)** | White       | Common electrical ground       | Any **GND** pin, e.g., the one at | **Pin 38**          |
+
 
 ---
 
