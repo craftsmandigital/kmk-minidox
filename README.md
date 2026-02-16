@@ -9,7 +9,7 @@
 This repository contains the source code and configuration for a **Dactyl Minidox** build. It features a modular codebase, a custom Norwegian/US-International hybrid layout, Vim-style navigation, and a "Stealth Mode" that hides the USB drive by default.
 
 ## 📖 Build Guide
-
+kk
 For a complete, step-by-step tutorial on hand-wiring this keyboard—including detailed pinout diagrams, matrix logic, and assembly instructions—please consult the full build guide:
 
 👉 **[Read the Dactyl Minidox Build Guide](https://how-to-do-stuff.pages.dev/Keyboard-related/dactyl_minidox_kmk_keyboard_build)**
@@ -80,6 +80,15 @@ To allow identical firmware on both sides, the **Right Half** columns must be ph
 
 * **Left Side**: Col 0 (Pinky) $\rightarrow$ GP2 ... Col 4 (Inner) $\rightarrow$ GP28
 * **Right Side**: Col 0 (Pinky) $\rightarrow$ GP28 ... Col 4 (Inner) $\rightarrow$ GP2
+
+
+### 🚥 The "Led strip" Wiring
+
+| LED Strip Wire   | Purpose                        | Connects to Pico Pin              | Physical Pin Number |
+| ---------------- | ------------------------------ | --------------------------------- | ------------------- |
+| **Power (+5V)**  | Provides 5V power to the LEDs  | **VBUS**                          | **Pin 40**          |
+| **Data (DIN)**   | Sends color/brightness signals | Any GPIO pin, e.g., **GP0**       | **Pin 1**           |
+| **Ground (GND)** | Common electrical ground       | Any **GND** pin, e.g., the one at | **Pin 38**          |
 
 ---
 
