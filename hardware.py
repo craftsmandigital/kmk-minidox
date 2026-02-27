@@ -22,7 +22,7 @@ class DactylMinidox(KMKKeyboard):
         # CHANGE THIS PIN to match your soldering!
         self.rgb_pixel_pin = board.GP16 
         # Total LEDs (Left + Right if chained, or just one side count if mirrored)
-        self.num_pixels = 6         
+        self.num_pixels = 5         
 
         # ---------------------------------------------------------------------
         # 2. SPLIT CONFIGURATION
