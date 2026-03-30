@@ -5,17 +5,19 @@ from kmk.modules.macros import Tap
 # This works because behaviors.py does NOT import this file.
 from behaviors import LEAD
 
-TASK_TRIGGER = 28 # Å
+TASK_TRIGGER = 28  # Å
 # --- Sequence Leader Configuration ---
 # Format: { LEADER_KEY: [ ((COORD_1, COORD_2), OUTPUT), ... ] }
 LEADER_SEQUENCES = {
     LEAD: [
-       
         # Leader -> Pos q  Closing window
-        ((0,), KC.LALT(KC.F4)),         
-        # Leader -> Pos 4 (T)  To copy screen content with power tools 
+        ((0,), KC.LALT(KC.F4)),
+        # Leader -> Pos 4 (T)  To copy screen content with power tools
         ((4,), KC.LWIN(KC.LSFT(KC.T))),
-       
+        # Leader -> Pos 7 (I)  To togle speach reckognition on/of
+        ((7,), KC.LCTL(KC.LSFT(KC.I))),
+        # Leader -> Pos 6 (U)  To togle speach reckognition with post processing on/of
+        ((6,), KC.LCTL(KC.LSFT(KC.U))),
         # hitting an app on the windows taskbar
         ((TASK_TRIGGER, 1), KC.LWIN(KC.N7)),
         ((TASK_TRIGGER, 2), KC.LWIN(KC.N8)),
@@ -28,5 +30,3 @@ LEADER_SEQUENCES = {
         ((TASK_TRIGGER, 23), KC.LWIN(KC.N6)),
     ]
 }
-
-
